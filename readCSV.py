@@ -4,9 +4,8 @@ import csv
 from commonFunction import *
 import numpy as np
 
-from decisionTree import decision_Tree
+from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer
 from svm_classification import svmclassifier, baggingSVM
-from ensemble import adboostDT, bagging_adboostDT
 from regression import logistic_regression
 from KNN import knn
 
@@ -47,7 +46,8 @@ featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
 #adboost decision tree
 #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
 #bagging adboost decision tree
-accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
 #svm
 #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
 #bagging svm
