@@ -2,9 +2,13 @@ __author__ = 'yangchen'
 
 import csv
 from commonFunction import *
-from svm_classification import svmclassifier
-
 import numpy as np
+
+from decisionTree import decision_Tree
+from svm_classification import svmclassifier, baggingSVM
+from ensemble import adboostDT, bagging_adboostDT
+
+
 def generateRichnessDataset():
     richNess = []
     sampleNum = np.zeros(50)
@@ -27,13 +31,31 @@ def generateRichnessDataset():
     testLabel = np.zeros(50)
     for index in range(20):
         testLabel[index] = 1
-    return(richNess, testLabel)
+    return(np.array(richNess), np.array(testLabel))
 
 dataFeature, dataLabel = generateRichnessDataset()
-featureFolder, labelFolder = crossValidation(np.array(dataFeature), dataLabel, 5)
-accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
 
-print(accu1, accu2)
+featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
+#decision tree
+accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
+#adboost decision tree
+#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
+#bagging adboost decision tree
+#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+#svm
+#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
+#bagging svm
+#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
+
+print(accu1, accu2, (accu1+accu2)/2)
 
 
-
+'''
+t = gainRatio(dataFeature, dataLabel)
+ratioDict = []
+for i in range(26):
+    ratioDict.append((i, t[i]))
+print(ratioDict)
+ratioDict = sorted(ratioDict, key = lambda x : -x[1])
+print(ratioDict)
+'''
