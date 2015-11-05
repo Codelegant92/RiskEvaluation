@@ -33,27 +33,27 @@ def generateRichnessDataset():
         testLabel[index] = 1
     return(np.array(richNess), np.array(testLabel))
 
-dataFeature, dataLabel = generateRichnessDataset()
+if(__name__ == "__main__"):
+    dataFeature, dataLabel = generateRichnessDataset()
+    featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
 
-featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
+    #knn
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 1)
+    #logistic regression
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
+    #decision tree
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
+    #adboost decision tree
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
+    #bagging adboost decision tree
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
+    #svm
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
+    #bagging svm
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
 
-#knn
-#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 1)
-#logistic regression
-#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
-#decision tree
-#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
-#adboost decision tree
-#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
-#bagging adboost decision tree
-#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
-accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
-#svm
-#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
-#bagging svm
-#accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
-
-print(accu1, accu2, (accu1+accu2)/2)
+    print(accu1, accu2, (accu1+accu2)/2)
 
 
 '''
