@@ -33,10 +33,68 @@ def generateRichnessDataset():
         testLabel[index] = 1
     return(np.array(richNess), np.array(testLabel))
 
+def repayTime2deadLine_day(dateList, subtractedDays): #dateList format'2015-08-27', subtractedDays format7
+    while(subtractedDays > 0):
+        if(dateList[2] > 1):
+            dateList[2] -= 1
+        elif(dateList[2] == 1):
+            if(dateList[1] in [5, 7, 8, 10, 12]):
+                dateList[2] = 30
+                dateList[1] -= 1
+            elif(dateList[1] in [2, 4, 6, 9, 11]):
+                dateList[2] = 31
+                dateList[1] -= 1
+            elif(dateList[1] == 3):
+                if((dateList[0] % 100 == 0 and dateList[0] % 400 == 0) or (dateList[0] % 100 != 0 and dateList[0] % 4 == 0)):
+                    dateList[2] = 29
+                    dateList[1] = 2
+                else:
+                    dateList[2] = 28
+                    dateList[1] = 2
+            else:
+                dateList[0] -= 1
+                dateList[1] = 12
+                dateList[2] = 31
+        subtractedDays -= 1
+    return(dateList)
+
+def repayTime2deadLine_mon(dateLIst, subtractedMon):
+
+def generateDateFeature(filePath):
+    f1 = open(filePath, 'rb')
+    readLines = csv.reader(f1)
+    date = []
+    i = 0
+    for rows in readLines:
+        if(i == 0):
+            i += 1
+            continue
+        dateList = [int(rows[0][0:4]), int(rows[0][5:7]), int(rows[0][8:10])]
+        date.append([dateList, int(rows[1].decode('utf-8-sig')[:-1])])
+        #print([dateList, int(rows[1].decode('utf-8-sig')[:-1])])
+    f1.close()
+    newDateList = [['trading time', 'life loan']]
+    newDateList.extend([repayTime2deadLine_day(item[0], item[1]), item[1]] for item in date)
+    print(newDateList)
+    f2 = open('33.csv', 'wb')
+    writeLines = csv.writer(f2)
+    writeLines.writerow(newDateList[0])
+    for item in newDateList[1 : ]:
+        year = str(item[0][0])
+        month = '0'+str(item[0][1]) if(item[0][1] < 10) else str(item[0][1])
+        day = '0'+str(item[0][2]) if(item[0][2] < 10) else str(item[0][2])
+        item[0] = year + '-' + month + '-' + day
+        item[1] = str(item[1])
+        writeLines.writerow(item)
+    f2.close()
+    print(newDateList)
+    return 0
+
 if(__name__ == "__main__"):
+    '''
     dataFeature, dataLabel = generateRichnessDataset()
     featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
-
+    '''
     #knn
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 1)
     #logistic regression
@@ -47,14 +105,16 @@ if(__name__ == "__main__"):
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
     #bagging adboost decision tree
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
-    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
     #svm
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
     #bagging svm
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
-
+    '''
     print(accu1, accu2, (accu1+accu2)/2)
-
+    '''
+    #print(repayTime2deadLine([2015, 9, 19], 180))
+    generateDateFeature('3.csv')
 
 '''
 t = gainRatio(dataFeature, dataLabel)
