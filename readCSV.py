@@ -58,7 +58,7 @@ def repayTime2deadLine_day(dateList, subtractedDays): #dateList format'2015-08-2
         subtractedDays -= 1
     return(dateList)
 
-def repayTime2deadLine_mon(dateLIst, subtractedMon):
+#def repayTime2deadLine_mon(dateLIst, subtractedMon):
 
 def generateDateFeature(filePath):
     f1 = open(filePath, 'rb')
@@ -90,6 +90,19 @@ def generateDateFeature(filePath):
     print(newDateList)
     return 0
 
+def generateTest(filePath1, filePath2):
+    featureList = []
+    labelList = []
+    featureFile = open(filePath1, 'rb')
+    labelFile = open(filePath2, 'rb')
+    for rows1 in featureFile.readlines():
+        featureList.append(rows1.split('\t')[:-1])
+    for rows2 in labelFile.readlines():
+        labelList.append(int(rows2[:-1]))
+    featureList = [[float(dataString) for dataString in dataStringList] for dataStringList in featureList]
+    labelList = [1 if item == 1 else 0 for item in labelList]
+    return(np.array(featureList), np.array(labelList))
+
 if(__name__ == "__main__"):
     '''
     dataFeature, dataLabel = generateRichnessDataset()
@@ -114,8 +127,11 @@ if(__name__ == "__main__"):
     print(accu1, accu2, (accu1+accu2)/2)
     '''
     #print(repayTime2deadLine([2015, 9, 19], 180))
-    generateDateFeature('3.csv')
-
+    #generateDateFeature('3.csv')
+    dataFeature, dataLabel = generateTest('Output/13237.txt', 'Output/13237-1.txt')
+    featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
+    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
+    print(accu1, accu2)
 '''
 t = gainRatio(dataFeature, dataLabel)
 ratioDict = []
