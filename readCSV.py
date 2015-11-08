@@ -58,7 +58,34 @@ def repayTime2deadLine_day(dateList, subtractedDays): #dateList format'2015-08-2
         subtractedDays -= 1
     return(dateList)
 
-#def repayTime2deadLine_mon(dateLIst, subtractedMon):
+#def repayTime2deadLine_mon(dateList, subtractedMon):
+
+def generateTradingTime_date(filePath1, filePath2):
+    f = open(filePath1)
+    dataPair = [['trading date', 'life loan']]
+    i = 0
+    for rows in f.readlines():
+        if(i == 0):
+            i += 1
+            continue
+
+        if(rows.split(' ')[2] != '\xe5\xa4\xa9\n'):
+            dataPair.append([rows.split(' ')[0], str(int(rows.split(' ')[1].split(',')[1]) * 30)])
+        else:
+            dataPair.append([rows.split(' ')[0], rows.split(' ')[1].split(',')[1]])
+
+        #print(rows.split(' '))
+    f.close()
+
+    #print(dataPair)
+
+    f1 = open(filePath2, 'wb')
+    csvwriter = csv.writer(f1)
+    for item in dataPair:
+        csvwriter.writerow(item)
+    f1.close()
+
+    return(0)
 
 def generateDateFeature(filePath):
     f1 = open(filePath, 'rb')
@@ -90,6 +117,7 @@ def generateDateFeature(filePath):
     print(newDateList)
     return 0
 
+#chengmin's data
 def generateTest(filePath1, filePath2):
     featureList = []
     labelList = []
@@ -128,10 +156,15 @@ if(__name__ == "__main__"):
     '''
     #print(repayTime2deadLine([2015, 9, 19], 180))
     #generateDateFeature('3.csv')
+    '''
     dataFeature, dataLabel = generateTest('Output/13237.txt', 'Output/13237-1.txt')
     featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
     accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
     print(accu1, accu2)
+    '''
+    generateTradingTime_date('2.csv', '22.csv')
+
+
 '''
 t = gainRatio(dataFeature, dataLabel)
 ratioDict = []
