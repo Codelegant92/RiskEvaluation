@@ -38,10 +38,10 @@ def repayTime2deadLine_day(dateList, subtractedDays): #dateList format'2015-08-2
         if(dateList[2] > 1):
             dateList[2] -= 1
         elif(dateList[2] == 1):
-            if(dateList[1] in [5, 7, 8, 10, 12]):
+            if(dateList[1] in [5, 7, 10, 12]):
                 dateList[2] = 30
                 dateList[1] -= 1
-            elif(dateList[1] in [2, 4, 6, 9, 11]):
+            elif(dateList[1] in [2, 4, 6, 8, 9, 11]):
                 dateList[2] = 31
                 dateList[1] -= 1
             elif(dateList[1] == 3):
@@ -58,64 +58,96 @@ def repayTime2deadLine_day(dateList, subtractedDays): #dateList format'2015-08-2
         subtractedDays -= 1
     return(dateList)
 
-#def repayTime2deadLine_mon(dateList, subtractedMon):
+def repayTime2deadLine_mon(dateList, subtractedMons):
+    while(subtractedMons > 0):
+        if(dateList[1] > 1):
+            dateList[1] -= 1
+        elif(dateList[1] == 1):
+            dateList[0] -= 1
+            dateList[1] = 12
+        subtractedMons -= 1
+    return(dateList)
 
-def generateDateFeature(filePath1, filePath2):
+#as life_loan has two types of representations: days and months
+def generateDateFeature(filePath1, filePath2, daysOrMonths):
     f1 = open(filePath1, 'rb')
     readLines = csv.reader(f1)
     date = []
     i = 0
+    newDateList = [['deadline', 'life loan']]
     for rows in readLines:
         if(i == 0):
             i += 1
             continue
-        dateList = [int(rows[0][0:4]), int(rows[0][5:7]), int(rows[0][8:10])]
-        date.append([dateList, int(rows[1].decode('utf-8-sig')[:-1])])
+        if(rows[0] == ''):
+            if(rows[1] == ''):
+                newDateList.append(['', ''])
+            else:
+                if(daysOrMonths == 'days'):
+                    newDateList.append(['', int(rows[1])])
+                elif(daysOrMonths == 'months'):
+                    newDateList.append(['', int(rows[1]) * 30])
+        else:
+            dateList = [int(rows[0][0:4]), int(rows[0][5:7]), int(rows[0][8:10])]
+            if(rows[1] == ''):
+                newDateList.append([dateList, ''])
+            else:
+                if(daysOrMonths == 'days'):
+                    newDateList.append([repayTime2deadLine_day(dateList, int(rows[1])), int(rows[1])])
+                elif(daysOrMonths == 'months'):
+                    newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1])), int(rows[1]) * 30])
         #print([dateList, int(rows[1].decode('utf-8-sig')[:-1])])
     f1.close()
-    newDateList = [['deadline', 'life loan']]
-    newDateList.extend([repayTime2deadLine_day(item[0], item[1]), item[1]] for item in date)
     print(newDateList)
+
     f2 = open(filePath2, 'wb')
     writeLines = csv.writer(f2)
     writeLines.writerow(newDateList[0])
     for item in newDateList[1 : ]:
-        year = str(item[0][0])
-        month = '0'+str(item[0][1]) if(item[0][1] < 10) else str(item[0][1])
-        day = '0'+str(item[0][2]) if(item[0][2] < 10) else str(item[0][2])
-        item[0] = year + '-' + month + '-' + day
-        item[1] = str(item[1])
+        if(item[0] != ''):
+            year = str(item[0][0])
+            month = '0'+str(item[0][1]) if(item[0][1] < 10) else str(item[0][1])
+            day = '0'+str(item[0][2]) if(item[0][2] < 10) else str(item[0][2])
+            item[0] = year + '-' + month + '-' + day
+            item[1] = str(item[1])
         writeLines.writerow(item)
     f2.close()
     print(newDateList)
     return 0
 
 
-def generateTradingTime_date(filePath1, filePath2):
+def generateTradingTime_date(filePath1, filePath2, daysOrMonths):
     f = open(filePath1)
-    dataPair = []
+    dataPair = [['release time', 'life loan']]
     i = 0
     for rows in f.readlines():
         if(i == 0):
             i += 1
             continue
 
-        '''
-        if((rows.split(' ')[0] == '\\N' or rows.split(' ')[0] == '') and (rows.split(' ')[1] == '\\N' or rows.split(' ')[1] == '')):
+        #if some items are null and repayment time + months //9.csv
+        if((rows.split(',')[0] == '\\N' or rows.split(',')[0] == '') and (rows.split(',')[1] == '\\N\n' or rows.split(',')[1] == '\n' or rows.split(',')[1] == '')):
             dataPair.append(['', ''])
-        elif((rows.split(' ')[0] == '\\N' or rows.split(' ')[0] == '') and (rows.split(' ')[1] != '\\N' and rows.split(' ')[1] != '')):
-            if(rows.split(' ')[1][-4:] != '\xe5\xa4\xa9\n'):
-                dataPair.append(['', str(int(rows.split(' ')[1].split(',')[:-4]) * 30)])
+        elif((rows.split(',')[0] == '\\N' or rows.split(',')[0] == '') and (rows.split(',')[1] != '\\N\n' and rows.split(',')[1] != '\n' and rows.split(',')[1] != '')):
+            if(rows.split(',')[1][-4:] != '\xe5\xa4\xa9\n'):
+                if(daysOrMonths == 'days'):
+                    dataPair.append(['', str(int(rows.split(',')[1][:-7])*30)])
+                else:
+                    dataPair.append(['', rows.split(',')[1][:-7]])
             else:
-                dataPair.append(['', rows.split(' ')[1].split(',')[:-4]])
-        elif((rows.split(' ')[0] != '\\N' and rows.split(' ')[0] != '') and (rows.split(' ')[1] == '\\N' or rows.split(' ')[1] == '')):
-            dataPair.append([rows.split(' ')[0], ''])
+                dataPair.append(['', rows.split(',')[1][:-4]])
+        elif((rows.split(',')[0] != '\\N' and rows.split(',')[0] != '') and (rows.split(',')[1] == '\\N\n' or rows.split(',')[1] == '\n' or rows.split(',')[1] == '')):
+            dataPair.append([rows.split(',')[0], ''])
         else:
-            if(rows.split(' ')[1][-4:] != '\xe5\xa4\xa9\n'):
-                dataPair.append([rows.split(' ')[0], str(int(rows.split(' ')[1].split(',')[:-4]) * 30)])
+            print('haha')
+            if(rows.split(',')[1][-4:] != '\xe5\xa4\xa9\n'):
+                if(daysOrMonths == 'days'):
+                    dataPair.append([rows.split(',')[0], str(int(rows.split(',')[1][:-7])*30)])
+                else:
+                    dataPair.append([rows.split(',')[0], rows.split(',')[1][:-7]])
             else:
-                dataPair.append([rows.split(' ')[0], rows.split(' ')[1].split(',')[:-4]])
-        '''
+                dataPair.append([rows.split(',')[0], rows.split(',')[1][:-4]])
+
 
         '''
         if(rows.split(' ')[2] != '\xe5\xa4\xa9\n'):
@@ -151,13 +183,36 @@ def generateTradingTime_date(filePath1, filePath2):
         #print(rows.split(',')[0].split('-'))
         '''
 
+        '''
         #comlicated date representation //7.csv
         if(i % 2 != 0):
             dataPair.append([rows.split(',')[0][1:-1], ''])
         else:
             dataPair[-1][1] = rows.split(',')[1][:-4]
         i += 1
+        '''
+        '''
+        rows0 = rows.split(',')[0]
+        rows1 = rows.split(',')[1]
+        if(rows1 != '\n'):
+            rows1 = str(int(rows1[:-1])*30)
+        dataPair.append([rows0, rows1])
+        '''
 
+        '''
+        if(i % 3 == 1):
+            dataPair.append([rows.split('\t')[0][:11], ''])
+        elif(i % 3 == 2):
+            dataPair[-1][1] = rows.split('\t')[6][:-1]
+        else:
+            if(rows.split('\t')[6] != '\xe5\xa4\xa9"\n'):
+                dataPair[-1][1] = str(int(dataPair[-1][1])*30)
+            #print(rows.split('\t'))
+        i += 1
+        '''
+
+        #print(rows.split(','))
+    print(dataPair)
     f.close()
 
     #print(dataPair)
@@ -201,12 +256,8 @@ if(__name__ == "__main__"):
     accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
     print(accu1, accu2)
     '''
-    #generateTradingTime_date('7.csv', '11.csv')
-    f = open('11.csv', 'rb')
-    csvreader = csv.reader(f)
-    for rows in csvreader:
-        print(rows)
-    f.close()
+    generateTradingTime_date('14.csv', '14-1.csv', 'days')
+    #generateDateFeature('9-2.csv', '9-1.csv', 'months')
 
 
 '''
