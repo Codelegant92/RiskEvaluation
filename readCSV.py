@@ -17,7 +17,11 @@ def generateRichnessDataset():
         filePath = 'Data/trainingData/' + str(num) + '.csv'
         f1 = open(filePath, 'rb')
         nullNum = np.zeros(featureNum)
+        i = 0
         for row in csv.reader(f1):
+            if(i == 0):
+                i += 1
+                continue
             j = 0
             sampleNum[num-1] += 1      #count the total number of samples of each platform
             for rows in row:
@@ -31,7 +35,19 @@ def generateRichnessDataset():
     testLabel = np.zeros(50)
     for index in range(20):
         testLabel[index] = 1
-    return(np.array(richNess), np.array(testLabel))
+    '''
+    f2 = open('TrainingRichness.csv', 'wb')
+    csvwriter = csv.writer(f2)
+    csvwriter.writerow(['releasetime', 'fulltime', 'repaytime', 'item_name', 'item_amount', 'item_status', 'item_introduction',
+                        'life_loan', 'money_rate', 'loan_type', 'loan_use', 'bonding_company', 'deadline', 'repaytype',
+                        'borrower_name', 'borrower_sex', 'borrower_age', 'borrower_education', 'borrower_marriage',
+                        'borrower_industry', 'borrower_city', 'borrower_income', 'borrower_house', 'borrower_car',
+                        'reward'])
+    richNess = np.array(richNess)[:, 1:]
+    for item in richNess:
+        csvwriter.writerow(item)
+    '''
+    return(np.array(richNess)[:, 1:], np.array(testLabel))
 
 def repayTime2deadLine_day(dateList, subtractedDays): #dateList format'2015-08-27', subtractedDays format7
     while(subtractedDays > 0):
@@ -69,10 +85,9 @@ def repayTime2deadLine_mon(dateList, subtractedMons):
     return(dateList)
 
 #as life_loan has two types of representations: days and months
-def generateDateFeature(filePath1, filePath2, daysOrMonths):
+def generateDateFeature(filePath1, filePath2):
     f1 = open(filePath1, 'rb')
     readLines = csv.reader(f1)
-    date = []
     i = 0
     newDateList = [['deadline', 'life loan']]
     for rows in readLines:
@@ -83,19 +98,20 @@ def generateDateFeature(filePath1, filePath2, daysOrMonths):
             if(rows[1] == ''):
                 newDateList.append(['', ''])
             else:
-                if(daysOrMonths == 'days'):
-                    newDateList.append(['', int(rows[1])])
-                elif(daysOrMonths == 'months'):
-                    newDateList.append(['', int(rows[1]) * 30])
+                newDateList.append(['', rows[1].split(' ')[0]+rows[1].split(' ')[1]])
+                #newDateList.append(['', rows[1])
         else:
             dateList = [int(rows[0][0:4]), int(rows[0][5:7]), int(rows[0][8:10])]
             if(rows[1] == ''):
                 newDateList.append([dateList, ''])
             else:
-                if(daysOrMonths == 'days'):
-                    newDateList.append([repayTime2deadLine_day(dateList, int(rows[1])), int(rows[1])])
-                elif(daysOrMonths == 'months'):
-                    newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1])), int(rows[1]) * 30])
+                if(rows[1][-3:] == '\xe5\xa4\xa9'):
+                    newDateList.append([repayTime2deadLine_day(dateList, int(rows[1].split(' ')[0])), rows[1].split(' ')[0]+rows[1].split(' ')[1]])
+                    #newDateList.append([repayTime2deadLine_day(dateList, int(rows[1][:-3])), rows[1]])
+                else:
+                    print(len(rows[1]),rows[1])
+                    newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1].split(' ')[0])), rows[1].split(' ')[0]+rows[1].split(' ')[1]])
+                    #newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1][:-7])), rows[1]])
         #print([dateList, int(rows[1].decode('utf-8-sig')[:-1])])
     f1.close()
     print(newDateList)
@@ -109,44 +125,38 @@ def generateDateFeature(filePath1, filePath2, daysOrMonths):
             month = '0'+str(item[0][1]) if(item[0][1] < 10) else str(item[0][1])
             day = '0'+str(item[0][2]) if(item[0][2] < 10) else str(item[0][2])
             item[0] = year + '-' + month + '-' + day
-            item[1] = str(item[1])
         writeLines.writerow(item)
     f2.close()
     print(newDateList)
     return 0
 
 
-def generateTradingTime_date(filePath1, filePath2, daysOrMonths):
+def generateTradingTime_date(filePath1, filePath2):
     f = open(filePath1)
+    csvreader = csv.reader(f)
     dataPair = [['release time', 'life loan']]
     i = 0
-    for rows in f.readlines():
+    for rows in csvreader:
         if(i == 0):
             i += 1
             continue
 
         #if some items are null and repayment time + months //9.csv
-        if((rows.split(',')[0] == '\\N' or rows.split(',')[0] == '') and (rows.split(',')[1] == '\\N\n' or rows.split(',')[1] == '\n' or rows.split(',')[1] == '')):
+        if((rows[0] == '\\N' or rows[0] == '') and (rows[1] == '\\N' or rows[1] == '')):
             dataPair.append(['', ''])
-        elif((rows.split(',')[0] == '\\N' or rows.split(',')[0] == '') and (rows.split(',')[1] != '\\N\n' and rows.split(',')[1] != '\n' and rows.split(',')[1] != '')):
-            if(rows.split(',')[1][-4:] != '\xe5\xa4\xa9\n'):
-                if(daysOrMonths == 'days'):
-                    dataPair.append(['', str(int(rows.split(',')[1][:-7])*30)])
-                else:
-                    dataPair.append(['', rows.split(',')[1][:-7]])
+        elif((rows[0] == '\\N' or rows[0] == '') and (rows[1] != '\\N' and rows[1] != '')):
+            if(rows[1][-3:] != '\xe5\xa4\xa9'):
+                dataPair.append(['', str(int(rows[1][:-7])*30)])
             else:
-                dataPair.append(['', rows.split(',')[1][:-4]])
-        elif((rows.split(',')[0] != '\\N' and rows.split(',')[0] != '') and (rows.split(',')[1] == '\\N\n' or rows.split(',')[1] == '\n' or rows.split(',')[1] == '')):
-            dataPair.append([rows.split(',')[0], ''])
+                dataPair.append(['', rows[1][:-4]])
+        elif((rows[0] != '\\N' and rows[0] != '') and (rows[1] == '\\N' or rows[1] == '')):
+            dataPair.append([rows[0].split(' ')[0], ''])
         else:
-            print('haha')
-            if(rows.split(',')[1][-4:] != '\xe5\xa4\xa9\n'):
-                if(daysOrMonths == 'days'):
-                    dataPair.append([rows.split(',')[0], str(int(rows.split(',')[1][:-7])*30)])
-                else:
-                    dataPair.append([rows.split(',')[0], rows.split(',')[1][:-7]])
+            if(rows[1][-3:] != '\xe5\xa4\xa9'):
+                dataPair.append([rows[0].split(' ')[0], str(int(rows[1][:-7])*30)])
+                #dataPair.append([rows[0][:4]+'-'+rows[0][4:6]+'-'+rows[0][6:8], str(int(rows[1][:-7])*30)])
             else:
-                dataPair.append([rows.split(',')[0], rows.split(',')[1][:-4]])
+                dataPair.append([rows[0].split(' ')[0], rows[1][:-4]])
 
 
         '''
@@ -211,7 +221,7 @@ def generateTradingTime_date(filePath1, filePath2, daysOrMonths):
         i += 1
         '''
 
-        #print(rows.split(','))
+        #print(rows)
     print(dataPair)
     f.close()
 
@@ -226,10 +236,11 @@ def generateTradingTime_date(filePath1, filePath2, daysOrMonths):
     return(0)
 
 if(__name__ == "__main__"):
-    '''
+
     dataFeature, dataLabel = generateRichnessDataset()
+    print(dataFeature[0])
     featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
-    '''
+
     #knn
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 1)
     #logistic regression
@@ -239,25 +250,19 @@ if(__name__ == "__main__"):
     #adboost decision tree
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
     #bagging adboost decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
     #svm
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
     #bagging svm
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
-    '''
+
     print(accu1, accu2, (accu1+accu2)/2)
-    '''
+
     #print(repayTime2deadLine([2015, 9, 19], 180))
     #generateDateFeature('3.csv')
-    '''
-    dataFeature, dataLabel = generateTest('Output/13237.txt', 'Output/13237-1.txt')
-    featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
-    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
-    print(accu1, accu2)
-    '''
-    generateTradingTime_date('14.csv', '14-1.csv', 'days')
-    #generateDateFeature('9-2.csv', '9-1.csv', 'months')
+    #generateDateFeature('18.csv', '18-2.csv')
+    #generateTradingTime_date('19.csv', '19-1.csv')
 
 
 '''
