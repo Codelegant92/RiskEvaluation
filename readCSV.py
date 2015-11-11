@@ -14,7 +14,7 @@ def generateRichnessDataset():
     sampleNum = np.zeros(50)
     featureNum = 26
     for num in xrange(1, 51):
-        filePath = 'Data/trainingData/' + str(num) + '.csv'
+        filePath = 'noisy data/trainingData/' + str(num) + '.csv'
         f1 = open(filePath, 'rb')
         nullNum = np.zeros(featureNum)
         i = 0
@@ -35,8 +35,9 @@ def generateRichnessDataset():
     testLabel = np.zeros(50)
     for index in range(20):
         testLabel[index] = 1
+    print(sampleNum)
     '''
-    f2 = open('TrainingRichness.csv', 'wb')
+    f2 = open('TrainingRichness_1.csv', 'wb')
     csvwriter = csv.writer(f2)
     csvwriter.writerow(['releasetime', 'fulltime', 'repaytime', 'item_name', 'item_amount', 'item_status', 'item_introduction',
                         'life_loan', 'money_rate', 'loan_type', 'loan_use', 'bonding_company', 'deadline', 'repaytype',
@@ -238,7 +239,6 @@ def generateTradingTime_date(filePath1, filePath2):
 if(__name__ == "__main__"):
 
     dataFeature, dataLabel = generateRichnessDataset()
-    print(dataFeature[0])
     featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
 
     #knn
@@ -246,11 +246,11 @@ if(__name__ == "__main__"):
     #logistic regression
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
     #decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
+    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
     #adboost decision tree
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
     #bagging adboost decision tree
-    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
     #svm
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
