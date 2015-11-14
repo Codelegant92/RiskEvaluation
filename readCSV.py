@@ -146,22 +146,27 @@ def generateTradingTime_date(filePath1, filePath2):
         if((rows[0] == '\\N' or rows[0] == '') and (rows[1] == '\\N' or rows[1] == '')):
             dataPair.append(['', ''])
         elif((rows[0] == '\\N' or rows[0] == '') and (rows[1] != '\\N' and rows[1] != '')):
-            if(rows[1][-3:] != '\xe5\xa4\xa9'):
-                dataPair.append(['', str(int(rows[1][:-7])*30)])
-            else:
-                dataPair.append(['', rows[1][:-4]])
-        elif((rows[0] != '\\N' and rows[0] != '') and (rows[1] == '\\N' or rows[1] == '')):
-            dataPair.append([rows[0].split(' ')[0], ''])
-        else:
-            if(rows[1][-3:] != '\xe5\xa4\xa9'):
-                dataPair.append([rows[0].split(' ')[0], str(int(rows[1][:-7])*30)])
+            if(rows[1][-3:] == '\xe6\x9c\x88'):
+                dataPair.append(['', str(int(rows[1][:-6])*30)])
                 #dataPair.append([rows[0][:4]+'-'+rows[0][4:6]+'-'+rows[0][6:8], str(int(rows[1][:-7])*30)])
+            elif(rows[1][-3:] == '\xe5\xa4\xa9'):
+                dataPair.append(['', rows[1][:-3]])
             else:
-                dataPair.append([rows[0].split(' ')[0], rows[1][:-4]])
+                dataPair.append(['', rows[1]])
+        elif((rows[0] != '\\N' and rows[0] != '') and (rows[1] == '\\N' or rows[1] == '')):
+            dataPair.append([rows[0][:10], ''])
+        else:
+            if(rows[1].split(' ')[-1][-3:] == '\xe6\x9c\x88'):
+                dataPair.append([rows[0].split(' ')[0], str(int(rows[1].split(' ')[0])*30)])
+                #dataPair.append([rows[0][:4]+'-'+rows[0][4:6]+'-'+rows[0][6:8], str(int(rows[1][:-7])*30)])
+            elif(rows[1].split(' ')[-1][-3:] == '\xe5\xa4\xa9'):
+                dataPair.append([rows[0].split(' ')[0], rows[1].split(' ')[0]])
+            else:
+                dataPair.append([rows[0].split(' ')[0], rows[1]])
 
 
         '''
-        if(rows.split(' ')[2] != '\xe5\xa4\xa9\n'):
+        if(rows.split(' ')[2] != '\xe5\xa4\xa9'):
             dataPair.append([rows.split(' ')[0], str(int(rows.split(' ')[1].split(',')[1]) * 30)])
         else:
             dataPair.append([rows.split(' ')[0], rows.split(' ')[1].split(',')[1]])
@@ -222,7 +227,7 @@ def generateTradingTime_date(filePath1, filePath2):
         i += 1
         '''
 
-        #print(rows)
+        print(rows[0], rows[1].split(' '))
     print(dataPair)
     f.close()
 
@@ -238,15 +243,15 @@ def generateTradingTime_date(filePath1, filePath2):
 
 if(__name__ == "__main__"):
 
-    dataFeature, dataLabel = generateRichnessDataset()
-    featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
+    #dataFeature, dataLabel = generateRichnessDataset()
+    #featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
 
     #knn
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 1)
     #logistic regression
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
     #decision tree
-    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
     #adboost decision tree
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
     #bagging adboost decision tree
@@ -257,12 +262,12 @@ if(__name__ == "__main__"):
     #bagging svm
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
 
-    print(accu1, accu2, (accu1+accu2)/2)
+    #print(accu1, accu2, (accu1+accu2)/2)
 
     #print(repayTime2deadLine([2015, 9, 19], 180))
     #generateDateFeature('3.csv')
     #generateDateFeature('18.csv', '18-2.csv')
-    #generateTradingTime_date('19.csv', '19-1.csv')
+    generateTradingTime_date('30.csv', '30-1.csv')
 
 
 '''
