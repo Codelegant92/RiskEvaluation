@@ -99,20 +99,20 @@ def generateDateFeature(filePath1, filePath2):
             if(rows[1] == ''):
                 newDateList.append(['', ''])
             else:
-                newDateList.append(['', rows[1].split(' ')[0]+rows[1].split(' ')[1]])
-                #newDateList.append(['', rows[1])
+                #newDateList.append(['', rows[1].split(' ')[0]+rows[1].split(' ')[1]])
+                newDateList.append(['', rows[1]])
         else:
             dateList = [int(rows[0][0:4]), int(rows[0][5:7]), int(rows[0][8:10])]
             if(rows[1] == ''):
                 newDateList.append([dateList, ''])
             else:
                 if(rows[1][-3:] == '\xe5\xa4\xa9'):
-                    newDateList.append([repayTime2deadLine_day(dateList, int(rows[1].split(' ')[0])), rows[1].split(' ')[0]+rows[1].split(' ')[1]])
-                    #newDateList.append([repayTime2deadLine_day(dateList, int(rows[1][:-3])), rows[1]])
+                    #newDateList.append([repayTime2deadLine_day(dateList, int(rows[1].split(' ')[0])), rows[1].split(' ')[0]+rows[1].split(' ')[1]])
+                    newDateList.append([repayTime2deadLine_day(dateList, int(rows[1][:-3])), rows[1]])
                 else:
                     print(len(rows[1]),rows[1])
-                    newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1].split(' ')[0])), rows[1].split(' ')[0]+rows[1].split(' ')[1]])
-                    #newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1][:-7])), rows[1]])
+                    #newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1].split(' ')[0])), rows[1].split(' ')[0]+rows[1].split(' ')[1]])
+                    newDateList.append([repayTime2deadLine_mon(dateList, int(rows[1][:-6])), rows[1]])
         #print([dateList, int(rows[1].decode('utf-8-sig')[:-1])])
     f1.close()
     print(newDateList)
@@ -141,11 +141,13 @@ def generateTradingTime_date(filePath1, filePath2):
         if(i == 0):
             i += 1
             continue
-        '''
+
         #if some items are null and repayment time + months //9.csv
         if((rows[0] == '\\N' or rows[0] == '') and (rows[1] == '\\N' or rows[1] == '')):
             dataPair.append(['', ''])
         elif((rows[0] == '\\N' or rows[0] == '') and (rows[1] != '\\N' and rows[1] != '')):
+
+            '''
             if(rows[1][-3:] == '\xe6\x9c\x88'):
                 dataPair.append(['', str(int(rows[1][:-6])*30)])
                 #dataPair.append([rows[0][:4]+'-'+rows[0][4:6]+'-'+rows[0][6:8], str(int(rows[1][:-7])*30)])
@@ -153,17 +155,49 @@ def generateTradingTime_date(filePath1, filePath2):
                 dataPair.append(['', rows[1][:-3]])
             else:
                 dataPair.append(['', rows[1]])
+            '''
+
+            if(rows[1][-3:] == '\xe6\x9c\x88'):
+                if(len(rows[1].split(' ')) == 2):
+                    dataPair.append([rows[0][0:10], str(int(rows[1].split(' ')[-1][4:-6])*30)])
+                else:
+                    dataPair.append([rows[0][0:10], str(int(rows[1][:-6])*30)])
+                #dataPair.append([rows[0][:4]+'-'+rows[0][4:6]+'-'+rows[0][6:8], str(int(rows[1][:-7])*30)])
+            elif(rows[1][-3:] == '\xe5\xa4\xa9'):
+                if(len(rows[1].split(' ')) == 2):
+                    dataPair.append([rows[0][0:10], rows[1].split(' ')[-1][4:-3]])
+                else:
+                    dataPair.append([rows[0][0:10], rows[1].split(' ')[-1][:-3]])
+            else:
+                dataPair.append([rows[0][0:10], rows[1]])
         elif((rows[0] != '\\N' and rows[0] != '') and (rows[1] == '\\N' or rows[1] == '')):
             dataPair.append([rows[0][:10], ''])
         else:
+
+            '''
             if(rows[1][-3:] == '\xe6\x9c\x88'):
-                dataPair.append([rows[0], str(int(rows[1][:-6])*30)])
+                dataPair.append(['', str(int(rows[1][:-6])*30)])
                 #dataPair.append([rows[0][:4]+'-'+rows[0][4:6]+'-'+rows[0][6:8], str(int(rows[1][:-7])*30)])
             elif(rows[1][-3:] == '\xe5\xa4\xa9'):
-                dataPair.append([rows[0], rows[1][:-3]])
+                dataPair.append(['', rows[1][:-3]])
             else:
-                dataPair.append([rows[0], rows[1]])
-        '''
+                dataPair.append(['', rows[1]])
+            '''
+
+            if(rows[1][-3:] == '\xe6\x9c\x88'):
+                if(len(rows[1].split(' ')) == 2):
+                    dataPair.append([rows[0][0:10], str(int(rows[1].split(' ')[-1][4:-6])*30)])
+                else:
+                    dataPair.append([rows[0][0:10], str(int(rows[1][:-6])*30)])
+                #dataPair.append([rows[0][:4]+'-'+rows[0][4:6]+'-'+rows[0][6:8], str(int(rows[1][:-7])*30)])
+            elif(rows[1][-3:] == '\xe5\xa4\xa9'):
+                if(len(rows[1].split(' ')) == 2):
+                    dataPair.append([rows[0][0:10], rows[1].split(' ')[-1][4:-3]])
+                else:
+                    dataPair.append([rows[0][0:10], rows[1].split(' ')[-1][:-3]])
+            else:
+                dataPair.append([rows[0][0:10], rows[1]])
+
 
         '''
         if(rows.split(' ')[2] != '\xe5\xa4\xa9'):
@@ -227,18 +261,18 @@ def generateTradingTime_date(filePath1, filePath2):
         i += 1
         '''
 
-        print(rows[0], rows[1])
+        print(rows[0], rows[1].split(' ')[-1], len(rows[1].split(' ')[-1]))
     print(dataPair)
     f.close()
 
     #print(dataPair)
-    '''
+
     f1 = open(filePath2, 'wb')
     csvwriter = csv.writer(f1)
     for item in dataPair:
         csvwriter.writerow(item)
     f1.close()
-    '''
+
     return(0)
 
 if(__name__ == "__main__"):
@@ -266,8 +300,8 @@ if(__name__ == "__main__"):
 
     #print(repayTime2deadLine([2015, 9, 19], 180))
     #generateDateFeature('3.csv')
-    #generateDateFeature('18.csv', '18-2.csv')
-    generateTradingTime_date('43.csv', '1.csv')
+    #generateDateFeature('55.csv', '55-2.csv')
+    generateTradingTime_date('70.csv', '1.csv')
 
 
 '''
