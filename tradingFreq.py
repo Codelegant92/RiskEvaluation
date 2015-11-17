@@ -36,4 +36,4 @@ def generateTradeFreq(filePath):
     print(average_timesPerDay_list)
 
 
-generateTradeFreq('clean data/trainingData/6.csv')
+generateTradeFreq('clean data/trainingData/4.csv')

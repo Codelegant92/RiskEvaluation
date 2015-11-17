@@ -1,0 +1,39 @@
+1、训练数据中：平台1---平台20为暂时正常的网络借贷平台，平台21---平台50为已经跑路的网络借贷平台
+2、字段：id
+         RELEASETIME
+         FULLTIME
+         REPAYTIME
+         ITEM_NAME
+         ITEM_AMOUNT
+         ITEM_STATUS
+         ITEM_INTRODUCTION
+         LIFE_LOAN
+         MONEY_RATE
+         LOAN_TYPE
+         LOAN_USE
+         BONDING_COMPANY
+         DEADLINE
+         REPAYTYPE
+         BORROWER_NAME
+         BORROWER_SEX
+         BORROWER_AGE
+         BORROWER_EDUCATION
+         BORROWER_MARRIAGE
+         BORROWER_INDUSTRY
+         BORROWER_CITY
+         BORROWER_INCOME
+         BORROWER_HOUSE
+         BORROWER_CAR
+         REWARD
+    均按此顺序排列，且格式均为字符型，字段id没有实际意义，可以忽略；
+
+3、 a 数据形式为csv格式，字段终止：逗号“，”；行终止：“\r\n”；NULL替换为“\N”；
+    b 对于full_time，理应为一个时间段，但有些平台直接给出了其时间，如果此字段为时间，那么可以看作发标时间，即RELEASETIME
+    c 缺失也是一种可以利用的信息，数据中的缺失用空缺和\N表示
+
+3、测试数据为平台51---平台70，共20家，此20家不提供最终的判断结果，需要选手通过自己的模型计算出结果
+
+
+
+注：虽然训练数据给出了二分类的结果，但是希望选手在尽可能保证正确分类的前提下，再把二分类结果细化，即给出每一个平台的风险值。
+这属于一个开放性的角度，因此，对于计算出的风险值，请给出介绍或解释，这部分也将纳入结果评比，祝各位好运！
