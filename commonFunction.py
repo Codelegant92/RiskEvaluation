@@ -186,6 +186,7 @@ def condiEntropy(trainFeatureCol, trainLabel, uniqueClassList, uniqueFeatureValu
     return(conditionalEntropy, featureEntropy)
 
 if __name__ == "__main__":
+    pass
     '''
     dataFeature, dataLabel = read_Germandata('./Data/german/german.data-numeric')
     print(dataFeature[0,:])
@@ -198,5 +199,5 @@ if __name__ == "__main__":
     print(a)
     print(b)
     '''
-    dataFeature, dataLabel = read_GermanData20('./Data/german/german.data')
-    print(list(dataLabel).count(0))
+    #dataFeature, dataLabel = read_GermanData20('./Data/german/german.data')
+    #print(list(dataLabel).count(0))

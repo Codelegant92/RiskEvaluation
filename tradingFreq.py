@@ -33,11 +33,11 @@ def generateTradeFreq(filePath):
     return(average_timesPerDay_list)
 
 def generateFreqFeature():
-    '''
-    writeFilePath = 'tradeFreq.csv'
+
+    writeFilePath = 'tradeFreq1.csv'
     with open(writeFilePath, 'wb') as f:
         csvwriter = csv.writer(f)
-        for i in range(1,50):
+        for i in range(1,51):
             readFilePath = 'clean data/trainingData/' + str(i) + '.csv'
             average_timesPerDay_list = generateTradeFreq(readFilePath)
             if(len(average_timesPerDay_list) != 0):
@@ -45,10 +45,10 @@ def generateFreqFeature():
             else:
                 csvwriter.writerow([0,0,0,0,0,0,0,0,0,0])
         f.close()
-    '''
+'''
     for i in range(1,51):
         readFilePath = 'clean data/trainingData/' + str(i) + '.csv'
         average_timesPerDay_list = generateTradeFreq(readFilePath)
-
-#generateTradeFreq('clean data/trainingData/18.csv')
+'''
+#generateTradeFreq('clean data/trainingData/45.csv')
 generateFreqFeature()
