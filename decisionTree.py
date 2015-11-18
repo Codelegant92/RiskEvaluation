@@ -40,8 +40,35 @@ def adboostDT(trainFeature, trainLabel, testFeature, estimatorNum = 50, learning
 def bagging_adboostDT(trainFeature, trainLabel, testFeature, estimatorNum = 50, learningRate = 1.0):
     folderNum = 5
     predictedLabel_voting = []
+    '''
+    posNum = list(trainLabel.count(1))
+    negNum = list(trainLabel.count(0))
+    posFeature = list(trainFeature)
+    negFeature = []
+    for i in range(trainLabel.shape[1]):
+        if(trainLabel[i] == 0):
+            negFeature.append(posFeature.pop(i))
+    if(posNum < negNum):
+        negFeatureFolders = []
+        sequence = range(negNum)
+        for i in range(folderNum):
+            random.shuffle(sequence)
+            negFeatureFolders.append([negFeature[j] for j in sequence[:posNum]])
+    for i in range(folderNum):
+        subTrainFeature = posFeature
+        subTrainFeature.extend(negFeatureFolders[i])
+        subTrainLabel =
+    '''
+
+
+
+
+
+
+
+
     randomFeatureFolder, randomLabelFolder = crossValidation(trainFeature, trainLabel, folderNum)
-    print("========bagging SVM========")
+    print("========bagging adaDT========")
     for i in range(folderNum):
         subTrainFeature = []
         subTrainLabel = []
@@ -54,7 +81,7 @@ def bagging_adboostDT(trainFeature, trainLabel, testFeature, estimatorNum = 50, 
         print("=====%dst Bagging=====") % (i+1)
         print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
         clf = AdaBoostClassifier(n_estimators = estimatorNum, learning_rate = learningRate)
-        clf.fit(trainFeature, trainLabel)
+        clf.fit(subTrainFeature, subTrainLabel)
         predictedLabel_temp = clf.predict(testFeature)
         predictedLabel_voting.append(predictedLabel_temp)
         print("%dst predicted labels:") % (i+1)

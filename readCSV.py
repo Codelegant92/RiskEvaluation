@@ -1,13 +1,7 @@
 __author__ = 'yangchen'
 
 import csv
-from commonFunction import *
 import numpy as np
-
-from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer
-from svm_classification import svmclassifier, baggingSVM
-from regression import logistic_regression
-from KNN import knn
 
 def generateRichnessDataset():
     richNess = []
@@ -277,30 +271,6 @@ def generateTradingTime_date(filePath1, filePath2):
 
 if(__name__ == "__main__"):
 
-    #dataFeature, dataLabel = generateRichnessDataset()
-    #featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, 5)
-
-    #knn
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 1)
-    #logistic regression
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
-    #decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
-    #adboost decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
-    #bagging adboost decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
-    #svm
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
-    #bagging svm
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
-
-    #print(accu1, accu2, (accu1+accu2)/2)
-
-    #print(repayTime2deadLine([2015, 9, 19], 180))
-    #generateDateFeature('3.csv')
-    #generateDateFeature('55.csv', '55-2.csv')
     generateTradingTime_date('70.csv', '1.csv')
 
 

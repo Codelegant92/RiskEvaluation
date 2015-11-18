@@ -32,16 +32,16 @@ def readFeatureCSV():
 
 if(__name__ == "__main__"):
     feature, label = readFeatureCSV()
-    featureFolder, labelFolder = crossValidation(feature, label, 2)
+    featureFolder, labelFolder = crossValidation(feature, label, 5)
 
     #logistic regression
-    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
+    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
     #decision tree
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
     #adboost decision tree
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
     #bagging adboost decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
     #svm
     #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
