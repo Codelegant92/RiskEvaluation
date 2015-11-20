@@ -4,8 +4,8 @@ import numpy as np
 
 from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer
 from svm_classification import svmclassifier, baggingSVM
-from regression import logistic_regression
-from KNN import knn
+from regression import logistic_regression, bagging_LR
+from KNN import knn, bagging_KNN
 
 def readFeatureCSV():
     with open('feature.csv') as f:
@@ -17,7 +17,6 @@ def readFeatureCSV():
                 i += 1
                 continue
             elif(i < 51):
-                print(i)
                 try:
                     Feature.append([float(item) for item in rows])
                 except ValueError, e:
@@ -32,20 +31,38 @@ def readFeatureCSV():
 
 if(__name__ == "__main__"):
     feature, label = readFeatureCSV()
-    featureFolder, labelFolder = crossValidation(feature, label, 5)
+    featureFolder, labelFolder = crossValidation(feature, label, 2)
+
+    #knn
+    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 5)
+    #bagging_KNN
+    accu11, accu21 = crossValidationFunc(featureFolder, labelFolder, bagging_KNN, 5)
 
     #logistic regression
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
+    accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
+    #bagging_LR
+    accu13, accu23 = crossValidationFunc(featureFolder, labelFolder, bagging_LR)
+
     #decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
+    accu14, accu24 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
     #adboost decision tree
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
+    accu15, accu25 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
     #bagging adboost decision tree
-    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
+    accu16, accu26 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 50, 1.0)
+    accu17, accu27 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
+
     #svm
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
+    accu18, accu28 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 2.0, 0.0625)
     #bagging svm
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
-    #accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, knn, 1)
-    print(accu1, accu2, (accu1+accu2)/2)
+    accu19, accu29 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 2.0, 0.0625)
+
+    print("knn: accu1-%f, accu2-%f, average accu_%f") % (accu1, accu2, (accu1+accu2)/2)
+    print("bagging knn: accu1-%f, accu2-%f, average accu_%f") % (accu11, accu21, (accu11+accu21)/2)
+    print("LR: accu1-%f, accu2-%f, average accu_%f") % (accu12, accu22, (accu12+accu22)/2)
+    print("bagging LR: accu1-%f, accu2-%f, average accu_%f") % (accu13, accu23, (accu13+accu23)/2)
+    print("DT: accu1-%f, accu2-%f, average accu_%f") % (accu14, accu24, (accu14+accu24)/2)
+    print("AdaDT: accu1-%f, accu2-%f, average accu_%f") % (accu15, accu25, (accu15+accu25)/2)
+    print("bagging AdaDT: accu1-%f, accu2-%f, average accu_%f") % (accu16, accu26, (accu16+accu26)/2)
+    print("Random Forest: accu1-%f, accu2-%f, average accu_%f") % (accu17, accu27, (accu17+accu27)/2)
+    print("svm: accu1-%f, accu2-%f, average accu_%f") % (accu18, accu28, (accu18+accu28)/2)
+    print("bagging svm: accu1-%f, accu2-%f, average accu_%f") % (accu19, accu29, (accu19+accu29)/2)
