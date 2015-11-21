@@ -6,7 +6,8 @@ def logistic_regression(trainFeature, trainLabel, testFeature):
     clf = linear_model.LogisticRegression(penalty='l2', dual=False)
     clf.fit(trainFeature, trainLabel)
     predictedLabel = clf.predict(testFeature)
-    return(predictedLabel)
+    predictedProb = clf.predict_proba(testFeature)
+    return(predictedLabel, predictedProb)
 
 def bagging_LR(trainFeature, trainLabel, testFeature):
     folderNum = 9
@@ -44,7 +45,9 @@ def bagging_LR(trainFeature, trainLabel, testFeature):
         print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
         #print(subTrainFeature.shape)
         #print(subTrainLabel)
-        predictedLabel_temp = logistic_regression(subTrainFeature, subTrainLabel, testFeature)
+        predictedLabel_temp, predictedProb = logistic_regression(subTrainFeature, subTrainLabel, subTrainFeature)
+        print("predicted probability:")
+        print(predictedProb)
         predictedLabel_voting.append(predictedLabel_temp)
         print("%dst predicted labels:") % (i+1)
         print(predictedLabel_temp)
