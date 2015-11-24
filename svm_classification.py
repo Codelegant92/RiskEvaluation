@@ -116,15 +116,15 @@ def baggingSVM(trainFeature, trainLabel, testFeature, para_C, para_gamma):
     print(predictedLabel)
     return(predictedLabel)
     '''
-'''
+
 if(__name__ == "__main__"):
+    '''
     folderNum = 5
     para_C = 128
     para_gamma = 0.00048828125
     dataFeature, dataLabel = generateRichnessDataset()
-    #dataFeature, dataLabel = read_GermanData('./Data/german/german.data-numeric')
-    #svm_GridSearch_creditScore(dataFeature, dataLabel)
     featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, folderNum)
     accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, para_C, para_gamma)
     print(accu1, accu2)
-'''
+    '''
+    pass

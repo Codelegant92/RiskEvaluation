@@ -44,7 +44,10 @@ def crossValidationFunc(featureFolder, labelFolder, func, *args):
         print("Positive: %d, Negative: %d") % (list(trainLabel).count(1), list(trainLabel).count(0))
         print("Testing samples:")
         print("Positive: %d, Negative: %d") % (list(testLabel).count(1), list(testLabel).count(0))
+
         predictedLabel = func(trainFeature, trainLabel, testFeature, *args)
+        print(testLabel)
+        predictedLabel = np.array(predictedLabel)
         diff = list(testLabel - predictedLabel)
         if(list(testLabel).count(1) != 0):
             type_one_error = (diff.count(1))/(float(list(testLabel).count(1)))
@@ -75,6 +78,38 @@ def crossValidationFunc(featureFolder, labelFolder, func, *args):
             accu2 += cross_accuracy[j]['type-2-accuracy']
             l += 1
     return(accu1/float(k), accu2/float(l))
+
+    '''
+        predictedLabelList = func(trainFeature, trainLabel, testFeature, *args)
+        print(list(testLabel))
+        cross_accuracy_temp = []
+        for predictedLabel in predictedLabelList:
+            predictedLabel = np.array(predictedLabel)
+            diff = list(testLabel - predictedLabel)
+            if(list(testLabel).count(1) != 0):
+                type_one_error = (diff.count(1))/(float(list(testLabel).count(1)))
+                type_one_accuracy = 1 - type_one_error
+                if(list(testLabel).count(0) != 0):
+                    type_two_error = (diff.count(-1))/(float(list(testLabel).count(0)))
+                    type_two_accuracy = 1 - type_two_error
+                    cross_accuracy_temp.append({'type-1-accuracy' : type_one_accuracy, 'type-2-accuracy' : type_two_accuracy})
+                else:
+                    cross_accuracy_temp.append({'type-1-accuracy' : type_one_accuracy, 'type-2-accuracy' : 'null'})
+            else:
+                if(list(testLabel).count(0) != 0):
+                    type_two_error = (diff.count(-1))/(float(list(testLabel).count(0)))
+                    type_two_accuracy = 1 - type_two_error
+                    cross_accuracy_temp.append({'type-1-accuracy' : 'null', 'type-2-accuracy' : type_two_accuracy})
+                else:
+                    cross_accuracy_temp.append({'type-1-accuracy' : 'null', 'type-2-accuracy' : 'null'})
+            #print(cross_accuracy_temp)
+        cross_accuracy.append(cross_accuracy_temp)
+    I = len(cross_accuracy)
+    J = len(cross_accuracy[0])
+    for j in range(J):
+        temp = [(cross_accuracy[i][j]['type-1-accuracy'], cross_accuracy[i][j]['type-2-accuracy']) for i in range(I)]
+        print((temp[0][0]+temp[1][0])/2, (temp[0][1]+temp[1][1])/2, ((temp[0][0]+temp[1][0])/2+(temp[0][1]+temp[1][1])/2)/2)
+    '''
 
 def FScore(featureMatrix, featureLabel):
     posMatrix = []
