@@ -8,6 +8,7 @@ from regression import logistic_regression, bagging_LR, bagging_twoLayer_LR
 from KNN import knn, bagging_KNN
 from classifierComparison import bagging_classifierComparison
 
+
 def readFeatureCSV():
     with open('feature.csv') as f:
         Feature = []
@@ -26,7 +27,9 @@ def readFeatureCSV():
             else:
                 break
         f.close()
-    Feature = np.array(Feature)
+    Feature = np.array(Feature)[:, :46]
+    Feature = Feature / np.max(Feature, axis = 0)
+    print(Feature)
     Label = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     return(Feature, Label)
 
@@ -63,6 +66,7 @@ if(__name__ == "__main__"):
     accu18, accu28 = crossValidationFunc(featureFolder, labelFolder, svmclassifier, 1.0, 0.015625)
     #bagging svm
     accu19, accu29 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 1.0, 0.015625)
+
     '''
     print("knn: accu1-%f, accu2-%f, average accu_%f") % (accu1, accu2, (accu1+accu2)/2)
     print("bagging knn: accu1-%f, accu2-%f, average accu_%f") % (accu11, accu21, (accu11+accu21)/2)
@@ -78,3 +82,4 @@ if(__name__ == "__main__"):
     print("LR: accu1-%f, accu2-%f, average accu_%f") % (accu12, accu22, (accu12+accu22)/2)
     print("bagging LR: accu1-%f, accu2-%f, average accu_%f") % (accu13, accu23, (accu13+accu23)/2)
     print("bagging two_layer LR: accu1-%f, accu2-%f, average accu_%f") % (accu1a, accu2a, (accu1a+accu2a)/2)
+

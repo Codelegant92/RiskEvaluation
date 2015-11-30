@@ -4,6 +4,8 @@ from pybrain.tools.shortcuts import buildNetwork
 from pybrain.supervised.trainers.backprop import BackpropTrainer
 from sklearn.linear_model.stochastic_gradient import SGDClassifier
 import numpy as np
+from mainFunc import readFeatureCSV
+
 from pybrain.structure import SoftmaxLayer
 from pybrain.structure.modules.sigmoidlayer import SigmoidLayer
 from pybrain.structure.modules.linearlayer import LinearLayer
@@ -33,15 +35,14 @@ def ANN(trainFeature, trainLabel, testFeature, testLabel, netStructure, para_rat
     pass #this step is for the output of predictedLabel
     print(np.array([Network.activate(x) for x in trainFeature])) 
     #print(testLabel)
-    print(Network.activate([0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0]))
     return(errorList) 
 
+if __name__ == "__main__":
+    feature, label = readFeatureCSV()
+    trainFeature = feature[:10, :]
+    testFeature = feature[10:, :]
+    trainLabel = label[:10]
+    testLabel = label[10:]
 
-dataFeature, dataLabel = read_GermanData('./Data/german/german.data-numeric')
-trainFeature = dataFeature[:800, :]
-print(trainFeature.shape)
-trainLabel = dataLabel[:800]
-testFeature = dataFeature[800:, :]
-testLabel = dataLabel[800:]
-errorLIST = ANN(trainFeature, trainLabel, testFeature, testLabel, [24, 12, 6, 1], 0.15, 0.5)  
-print(errorLIST) 
+    errorLIST = ANN(trainFeature, trainLabel, testFeature, testLabel, [36, 12, 6, 1], 0.15, 0.5)
+    print(errorLIST)
