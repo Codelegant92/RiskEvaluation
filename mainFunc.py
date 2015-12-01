@@ -10,7 +10,7 @@ from classifierComparison import bagging_classifierComparison
 
 
 def readFeatureCSV():
-    with open('feature.csv') as f:
+    with open('feature/feature.csv') as f:
         Feature = []
         csvreader = csv.reader(f)
         i = 0
@@ -27,7 +27,7 @@ def readFeatureCSV():
             else:
                 break
         f.close()
-    Feature = np.array(Feature)[:, :46]
+    Feature = np.array(Feature)[:, :]
     Feature = Feature / np.max(Feature, axis = 0)
     print(Feature)
     Label = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
@@ -79,7 +79,7 @@ if(__name__ == "__main__"):
     print("bagging AdaDT: accu1-%f, accu2-%f, average accu_%f") % (accu16, accu26, (accu16+accu26)/2)
     print("Random Forest: accu1-%f, accu2-%f, average accu_%f") % (accu17, accu27, (accu17+accu27)/2)
     '''
+
     print("LR: accu1-%f, accu2-%f, average accu_%f") % (accu12, accu22, (accu12+accu22)/2)
     print("bagging LR: accu1-%f, accu2-%f, average accu_%f") % (accu13, accu23, (accu13+accu23)/2)
     print("bagging two_layer LR: accu1-%f, accu2-%f, average accu_%f") % (accu1a, accu2a, (accu1a+accu2a)/2)
-

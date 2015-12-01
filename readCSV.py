@@ -7,8 +7,8 @@ def generateRichnessDataset():
     richNess = []
     sampleNum = np.zeros(50)
     featureNum = 26
-    for num in xrange(1, 51):
-        filePath = 'noisy data/trainingData/' + str(num) + '.csv'
+    for num in xrange(0, 51):
+        filePath = 'noisy data/testingData/' + str(num) + '.csv'
         f1 = open(filePath, 'rb')
         nullNum = np.zeros(featureNum)
         i = 0
@@ -271,8 +271,13 @@ def generateTradingTime_date(filePath1, filePath2):
 
 if(__name__ == "__main__"):
 
-    generateTradingTime_date('70.csv', '1.csv')
-
+    #generateTradingTime_date('70.csv', '1.csv')
+    richness, label = generateRichnessDataset()
+    with open('feature/trainingRichness2.csv', 'wb') as f:
+        csvwriter = csv.writer(f)
+        for i in range(richness.shape[0]):
+            csvwriter.writerow(richness[i])
+        f.close()
 
 '''
 t = gainRatio(dataFeature, dataLabel)
