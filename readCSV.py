@@ -270,7 +270,7 @@ def generateTradingTime_date(filePath1, filePath2):
     return(0)
 
 if(__name__ == "__main__"):
-
+    '''
     #generateTradingTime_date('70.csv', '1.csv')
     richness, label = generateRichnessDataset()
     with open('feature/trainingRichness2.csv', 'wb') as f:
@@ -278,6 +278,34 @@ if(__name__ == "__main__"):
         for i in range(richness.shape[0]):
             csvwriter.writerow(richness[i])
         f.close()
+    '''
+
+    amount = []
+    i = 1
+    with open('34.csv', 'rb') as f:
+        csvreader = csv.reader(f)
+        for rows in csvreader:
+            if(i == 1):
+                i += 1
+                continue
+            stramount = rows[0].split('\t')[0]
+            print(stramount)
+            if(stramount[-1] == '\n'):
+                amount.append([stramount[:-1]])
+                print('hahahaha')
+            else:
+                amount.append([(stramount)])
+        f.close()
+        print(amount[2046])
+
+    amount = np.array(amount)
+    with open('34-1.csv', 'wb') as f:
+        csvwriter = csv.writer(f)
+        for i in range(len(amount)):
+            #print(amount[i])
+            csvwriter.writerow(amount[i])
+        f.close()
+
 
 '''
 t = gainRatio(dataFeature, dataLabel)

@@ -15,7 +15,7 @@ def readFeatureCSV():
         csvreader = csv.reader(f)
         i = 0
         for rows in csvreader:
-            if(i == 0 or i == 8 or i == 10 or i == 11 or i == 14 or i == 38 or i == 45 or i == 46):
+            if(i == 0 or i == 8 or i == 10 or i == 11 or i == 13 or i == 14 or i == 22 or i == 38 or i == 45 or i == 46):
                 i += 1
                 continue
             elif(i < 51):
@@ -27,8 +27,8 @@ def readFeatureCSV():
             else:
                 break
         f.close()
-    Feature = np.array(Feature)[:, :]
-    Feature = Feature / np.max(Feature, axis = 0)
+    Feature = np.array(Feature)[:, :56]
+    Feature = (Feature - np.min(Feature, axis = 0))/ (np.max(Feature, axis = 0) - np.min(Feature, axis = 0))
     print(Feature)
     Label = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     return(Feature, Label)
@@ -67,7 +67,7 @@ if(__name__ == "__main__"):
     #bagging svm
     accu19, accu29 = crossValidationFunc(featureFolder, labelFolder, baggingSVM, 1.0, 0.015625)
 
-    '''
+
     print("knn: accu1-%f, accu2-%f, average accu_%f") % (accu1, accu2, (accu1+accu2)/2)
     print("bagging knn: accu1-%f, accu2-%f, average accu_%f") % (accu11, accu21, (accu11+accu21)/2)
 
@@ -78,7 +78,7 @@ if(__name__ == "__main__"):
     print("AdaDT: accu1-%f, accu2-%f, average accu_%f") % (accu15, accu25, (accu15+accu25)/2)
     print("bagging AdaDT: accu1-%f, accu2-%f, average accu_%f") % (accu16, accu26, (accu16+accu26)/2)
     print("Random Forest: accu1-%f, accu2-%f, average accu_%f") % (accu17, accu27, (accu17+accu27)/2)
-    '''
+
 
     print("LR: accu1-%f, accu2-%f, average accu_%f") % (accu12, accu22, (accu12+accu22)/2)
     print("bagging LR: accu1-%f, accu2-%f, average accu_%f") % (accu13, accu23, (accu13+accu23)/2)
