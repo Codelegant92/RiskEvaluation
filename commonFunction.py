@@ -22,6 +22,7 @@ def crossValidation(featureMatrix, featureLabel, folderNum):
     randomFolders.append(sequence[(n*folderNum):])
     randomFeatureMatrix = [np.array([list(list(featureMatrix)[j]) for j in folderList]) for folderList in randomFolders]
     randomFeatureLabel = [np.array([list(featureLabel)[k] for k in folderList]) for folderList in randomFolders]
+    print(randomFolders)
     return(randomFeatureMatrix, randomFeatureLabel)#randomFeatureMatrix:a list of ndarray matrix [array([[],[],...,[]]), array([[],...,[]]),...,array([[],...,[]])]
                                                    #randomFeatureLabel:a list of ndarray [array([]), ..., array([])]
 

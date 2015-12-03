@@ -6,6 +6,7 @@ from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomFore
 from svm_classification import svmclassifier, baggingSVM, svm_GridSearch_creditScore
 from regression import logistic_regression, bagging_LR, bagging_twoLayer_LR
 from KNN import knn, bagging_KNN
+
 from classifierComparison import bagging_classifierComparison
 
 
@@ -35,8 +36,11 @@ def readFeatureCSV():
 
 if(__name__ == "__main__"):
     feature, label = readFeatureCSV()
-    featureFolder, labelFolder = crossValidation(feature, label, 2)
+    #featureFolder, labelFolder = crossValidation(feature, label, 2)
     #crossValidationFunc(featureFolder, labelFolder, bagging_classifierComparison)
+    randomFolders = [[14, 7, 22, 33, 23, 31, 2, 4, 40, 34, 1, 17, 35, 19, 6, 36, 0, 16, 25, 20], [39, 3, 27, 15, 18, 30, 29, 5, 10, 9, 11, 37, 32, 8, 21, 28, 12, 38, 26, 24, 13]]
+    featureFolder = [np.array([list(list(feature)[j]) for j in folderList]) for folderList in randomFolders]
+    labelFolder = [np.array([list(label)[k] for k in folderList]) for folderList in randomFolders]
 
 
     #knn
