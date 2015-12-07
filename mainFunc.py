@@ -9,7 +9,6 @@ from KNN import knn, bagging_KNN
 
 from classifierComparison import bagging_classifierComparison
 
-
 def readFeatureCSV():
     with open('feature/feature.csv') as f:
         Feature = []
@@ -30,15 +29,16 @@ def readFeatureCSV():
         f.close()
     Feature = np.array(Feature)[:, :56]
     Feature = (Feature - np.min(Feature, axis = 0))/ (np.max(Feature, axis = 0) - np.min(Feature, axis = 0))
-    print(Feature)
+    #print(Feature)
     Label = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     return(Feature, Label)
 
 if(__name__ == "__main__"):
     feature, label = readFeatureCSV()
-    #featureFolder, labelFolder = crossValidation(feature, label, 2)
+    #featureFolder, labelFolder = crossValidation(feature, label, 3)
     #crossValidationFunc(featureFolder, labelFolder, bagging_classifierComparison)
-    randomFolders = [[14, 7, 22, 33, 23, 31, 2, 4, 40, 34, 1, 17, 35, 19, 6, 36, 0, 16, 25, 20], [39, 3, 27, 15, 18, 30, 29, 5, 10, 9, 11, 37, 32, 8, 21, 28, 12, 38, 26, 24, 13]]
+    #randomFolders = [[14, 7, 22, 33, 23, 31, 2, 4, 40, 34, 1, 17, 35, 19, 6, 36, 0, 16, 25, 20], [39, 3, 27, 15, 18, 30, 29, 5, 10, 9, 11, 37, 32, 8, 21, 28, 12, 38, 26, 24, 13]]
+    randomFolders = [[8, 21, 19, 39, 6, 25, 23, 15, 26, 3, 34, 7, 30], [14, 36, 38, 20, 10, 4, 35, 37, 31, 40, 27, 5, 12], [0, 1, 16, 29, 2, 9, 28, 32, 24, 22, 18, 13, 17, 33, 11]]
     featureFolder = [np.array([list(list(feature)[j]) for j in folderList]) for folderList in randomFolders]
     labelFolder = [np.array([list(label)[k] for k in folderList]) for folderList in randomFolders]
 
