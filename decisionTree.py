@@ -11,6 +11,8 @@ def decision_Tree(trainFeature, trainLabel, testFeature):
     clf = tree.DecisionTreeClassifier()
     clf.fit(trainFeature, trainLabel)
     predictedLabel = clf.predict(testFeature)
+    print("feature importance:")
+    print(clf.feature_importances_)
     '''
     dot_data = StringIO()
     tree.export_graphviz(clf, out_file=dot_data)

@@ -172,7 +172,7 @@ def gainRatio(trainFeature, trainLabel):
     informationGainRatioList = []
     for i in range(featureNum):
         conditionalEnt, featureEnt = condiEntropy(trainFeature[:, i], trainLabel, uniqueClassList, uniqueFeatureValueList[i])
-        informationGainRatioList.append((Ent-conditionalEnt) / featureEnt)
+        informationGainRatioList.append(((Ent-conditionalEnt)+0.01) / (featureEnt+0.01))
     return(np.array(informationGainRatioList))
    
 #function: calculate the conditional entropy of each partition of the Feature

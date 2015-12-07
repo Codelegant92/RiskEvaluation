@@ -6,10 +6,12 @@ from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomFore
 from svm_classification import svmclassifier, baggingSVM, svm_GridSearch_creditScore
 from regression import logistic_regression, bagging_LR, bagging_twoLayer_LR
 from KNN import knn, bagging_KNN
+from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.decomposition import PCA
 
 from classifierComparison import bagging_classifierComparison
 
-def readFeatureCSV():
+def readFeatureCSV(para_k):
     with open('feature/feature.csv') as f:
         Feature = []
         csvreader = csv.reader(f)
@@ -27,10 +29,14 @@ def readFeatureCSV():
             else:
                 break
         f.close()
-    Feature = np.array(Feature)[:, :56]
+    Feature = np.array(Feature)[:, :]
     Feature = (Feature - np.min(Feature, axis = 0))/ (np.max(Feature, axis = 0) - np.min(Feature, axis = 0))
+
     #print(Feature)
-    Label = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    Label = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+
+    Feature = SelectKBest(chi2, k=para_k).fit_transform(Feature, Label)
+    #Feature = PCA(n_components=para_k).fit_transform(Feature, Label)
     return(Feature, Label)
 
 if(__name__ == "__main__"):
