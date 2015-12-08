@@ -1,6 +1,7 @@
 #This is for logistic regression
 from commonFunction import *
 from sklearn import linear_model
+from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
 
 def logistic_regression(trainFeature, trainLabel, testFeature):
     clf = linear_model.LogisticRegression(penalty='l2', dual=False)
@@ -9,8 +10,7 @@ def logistic_regression(trainFeature, trainLabel, testFeature):
     predictedProb = clf.predict_proba(testFeature)
     return(predictedLabel)
 
-def bagging_LR(trainFeature, trainLabel, testFeature):
-    folderNum = 9
+def bagging_LR(trainFeature, trainLabel, testFeature, folderNum=5):
     predictedLabel_voting = []
 
     posNum = list(trainLabel).count(1)
@@ -56,8 +56,7 @@ def bagging_LR(trainFeature, trainLabel, testFeature):
     print(predictedLabel)
     return(predictedLabel)
 
-def bagging_twoLayer_LR(trainFeature, trainLabel, testFeature):
-    folderNum = 9
+def bagging_twoLayer_LR(trainFeature, trainLabel, testFeature, folderNum=5):
     newTrainFeature = []
     newTestFeature = []
     posNum = list(trainLabel).count(1)
@@ -110,11 +109,11 @@ def bagging_twoLayer_LR(trainFeature, trainLabel, testFeature):
     print(predictedLabel)
     return(predictedLabel)
 
+def Ad_LR(trainFeature, trainLabel, testFeature):
+    clf = AdaBoostClassifier(linear_model.LogisticRegression(penalty='l2', dual=False))
+    clf.fit(trainFeature, trainLabel)
+    predictedLabel = clf.predict(testFeature)
+    return(predictedLabel)
 
 if(__name__ == "__main__"):
-    folderNum = 5
-    dataFeature, dataLabel = readAustralianData('./Data/Australia/australian.dat')
-    #dataFeature, dataLabel = read_GermanData('./Data/german/german.data-numeric')
-    featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, folderNum)
-    accu1, accu2 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
-    print(accu1, accu2)
+    pass

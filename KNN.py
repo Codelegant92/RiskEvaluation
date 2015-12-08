@@ -137,8 +137,7 @@ def miniDis(featureMatrix):
         minimumDistance.append(min(distance))
     return(min(minimumDistance))
 
-def bagging_KNN(trainFeature, trainLabel, testFeature, k):
-    folderNum = 9
+def bagging_KNN(trainFeature, trainLabel, testFeature, k, folderNum = 5):
     predictedLabel_voting = []
 
     posNum = list(trainLabel).count(1)

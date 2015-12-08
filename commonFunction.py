@@ -45,7 +45,7 @@ def crossValidationFunc(featureFolder, labelFolder, func, *args):
         print("Positive: %d, Negative: %d") % (list(trainLabel).count(1), list(trainLabel).count(0))
         print("Testing samples:")
         print("Positive: %d, Negative: %d") % (list(testLabel).count(1), list(testLabel).count(0))
-
+        print(testLabel)
         '''
         #for classifier comparison
         predictedLabelList = func(trainFeature, trainLabel, testFeature, *args)
@@ -80,7 +80,7 @@ def crossValidationFunc(featureFolder, labelFolder, func, *args):
         '''
 
         predictedLabel = func(trainFeature, trainLabel, testFeature, *args)
-        print(testLabel)
+
         predictedLabel = np.array(predictedLabel)
         diff = list(testLabel - predictedLabel)
         if(list(testLabel).count(1) != 0):

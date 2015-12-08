@@ -2,10 +2,11 @@ from commonFunction import *
 import numpy as np
 import time
 from sklearn import tree
-from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier, GradientBoostingClassifier
 from sklearn.externals.six import StringIO
 import os
 #import pydot
+
 
 def decision_Tree(trainFeature, trainLabel, testFeature):
     clf = tree.DecisionTreeClassifier()
@@ -39,8 +40,7 @@ def adboostDT(trainFeature, trainLabel, testFeature, estimatorNum = 50, learning
     predictedLabel = clf.predict(testFeature)
     return(predictedLabel)
 
-def bagging_adboostDT(trainFeature, trainLabel, testFeature, estimatorNum = 50, learningRate = 1.0):
-    folderNum = 9
+def bagging_adboostDT(trainFeature, trainLabel, testFeature, folderNum, estimatorNum = 50, learningRate = 1.0):
     predictedLabel_voting = []
 
     posNum = list(trainLabel).count(1)
@@ -113,6 +113,13 @@ def bagging_adboostDT(trainFeature, trainLabel, testFeature, estimatorNum = 50, 
     print(predictedLabel)
     return(predictedLabel)
     '''
+
+def GBDT(trainFeature, trainLabel, testFeature):
+    clf = GradientBoostingClassifier()
+    clf.fit(trainFeature, trainLabel)
+    predictedLabel = clf.predict(testFeature)
+    return(predictedLabel)
+
 if __name__ == "__main__":
     folderNum = 5
     #dataFeature, dataLabel = readAustralianData('./Data/Australia/australian.dat')
