@@ -110,7 +110,7 @@ def bagging_twoLayer_LR(trainFeature, trainLabel, testFeature, folderNum=5):
     return(predictedLabel)
 
 def Ad_LR(trainFeature, trainLabel, testFeature):
-    clf = AdaBoostClassifier(linear_model.LogisticRegression(penalty='l2', dual=False))
+    clf = AdaBoostRegressor(linear_model.LogisticRegression(penalty='l2', dual=False))
     clf.fit(trainFeature, trainLabel)
     predictedLabel = clf.predict(testFeature)
     return(predictedLabel)

@@ -18,7 +18,7 @@ def readFeature(para_k):
         csvreader = csv.reader(f)
         i = 0
         for rows in csvreader:
-            if(i == 0 or i == 8 or i == 10 or i == 11 or i == 13 or i == 14 or i == 22 or i == 38 or i == 45 or i == 46 or i == 51 or i == 54 or i == 66):
+            if(i == 0 or i == 8 or i == 10 or i == 11 or i == 13 or i == 14 or i == 22 or i == 38 or i == 46 or i == 51 or i == 54 or i == 66):
                 i += 1
                 continue
             else:

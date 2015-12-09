@@ -1,89 +1,88 @@
 import csv
-from commonFunction import *
 import numpy as np
-from sklearn import linear_model
 
-from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer, GBDT
-from svm_classification import svmclassifier, baggingSVM, svm_GridSearch_creditScore
-from regression import logistic_regression, bagging_LR, bagging_twoLayer_LR, Ad_LR
-from KNN import knn, bagging_KNN
-from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.decomposition import PCA
-
-from classifierComparison import bagging_classifierComparison
-
-def readFeature(para_k):
-    with open('feature/trainingRichness_clean.csv') as f:
-        Feature = []
+def readFeature():
+    with open('feature/feature.csv') as f:
+        fullFeature = []
+        missFeature = []
         csvreader = csv.reader(f)
+        i = 0
         for rows in csvreader:
-            try:
-                Feature.append([float(item) for item in rows])
-            except ValueError, e:
-                print("error", e, "on line", i)
+            if(i == 0):
+                i += 1
+                continue
+            featureTemp = [float(item) if item != 'nan' else item for item in rows]
+            if('nan' in featureTemp):
+                missIndices = [j for j, x in enumerate(featureTemp) if(x == 'nan')]
+                featureTemp = [0 if(x == 'nan') else x for x in featureTemp]
+                missFeature.append((featureTemp, missIndices))
+            else:
+                fullFeature.append(featureTemp)
         f.close()
-    Feature = np.array(Feature)[:, :]
-    Feature = (Feature - np.min(Feature, axis = 0))/ (np.max(Feature, axis = 0) - np.min(Feature, axis = 0))
-    trainFeature = Feature[:50, :]
-    testFeature = Feature[50:, :]
-    #print(Feature)
-    trainLabel = [1 for i in range(20)]
-    trainLabel.extend([0 for i in range(30)])
-    trainLabel = np.array(trainLabel)
-    #trainLabel = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    print("++++++++++++++++++++++++++++begin supplementing missing features++++++++++++++++++++++++++++++++++++++++")
+    #a parameter of supplementFeature is the number of nearest neighbors of the missing samples
+    newFullFeature, newMissFeature = supplementFeature(fullFeature, missFeature, 20)
+    trainSamples = []
+    testFeature = []
+    for item in newFullFeature:
+        if(item[-1] == 9):
+            testFeature.append(item[:-1])
+        else:
+            trainSamples.append(item)
+    for item in newMissFeature:
+        if(item[-1] == 9):
+            testFeature.append(item[:-1])
+        else:
+            trainSamples.append(item)
+    trainFeature = np.array(trainSamples)[:, :-1]
+    trainLabel = np.array(trainSamples)[:, -1]
+    print("++++++++++++++++++++++++++++end supplementing missing features++++++++++++++++++++++++++++++++++++++++")
+    return(trainFeature, trainLabel, testFeature)
+
+#to supplement the missing features, parameter ---> nearestNum
+def supplementFeature(fullFeature, missFeature, nearestNum = 6):
+    supplementedFeature = []
+    fullFeature = np.array(fullFeature)
+
+    for missFeatureTuple in missFeature:        #start to supplement missing features
+        singleMissFeature = np.array(missFeatureTuple[0])
+
+        print("=========================================================")
+        valuedFeatureIndices = [i for i in range(singleMissFeature.shape[0]-1) if(i not in missFeatureTuple[1] and i != 25)]
+        missedFeatureIndices = missFeatureTuple[1]
+        '''
+        print("valuedFeatureIndices:")
+        print(valuedFeatureIndices)
+        print("missedFeatureIndices:")
+        print(missedFeatureIndices)
+        print("----------------------------------------")
+        '''
+
+        euclideanDistance = []                  #calculate the distance between the missfeature and each full feature
+        for singleFeature in fullFeature:
+            euclideanDistance.append(np.linalg.norm(singleFeature[valuedFeatureIndices] - singleMissFeature[valuedFeatureIndices]))
+        distanceTupleList = [(indice, distance) for indice, distance in enumerate(euclideanDistance)]
+        distanceTupleList = sorted(distanceTupleList, key = lambda x: x[1])
+        nearestIndices = [distanceTupleList[i][0] for i in range(nearestNum)]
+        '''
+        print("distanceTupleList:")
+        print(distanceTupleList)
+        print("nearestIndices:")
+        print(nearestIndices)
+        print("----------------------------------------")
+        '''
+
+        for i in missedFeatureIndices:
+            singleMissFeature[i] = np.mean(fullFeature.T[i, nearestIndices])
+            print("i->%d, means->%f") % (i, singleMissFeature[i])
+        supplementedFeature.append(singleMissFeature)
+    supplementedFeature = np.array(supplementedFeature)
 
     #Feature = SelectKBest(chi2, k=para_k).fit_transform(Feature, Label)
     #Feature = PCA(n_components=para_k).fit_transform(Feature, Label)
-    return(trainFeature, trainLabel, testFeature)
+    return(fullFeature, supplementedFeature)
+
+
 
 if(__name__ == "__main__"):
-    trainFeature, trainLabel, testFeature = readFeature(59)
-    folderNum = 21
-
-    predictedProbList = []
-
-    posNum = list(trainLabel).count(1)
-    negNum = list(trainLabel).count(0)
-    print("positive number: %d, negative number: %d") % (posNum, negNum)
-    trainFeature = list(trainFeature)
-    posFeature = []
-    negFeature = []
-    for i in range(trainLabel.shape[0]):
-        try:
-            if(trainLabel[i] == 0):
-                negFeature.append(trainFeature[i])
-            else:
-                posFeature.append(trainFeature[i])
-        except ValueError, e:
-            print("error", e, "on line", i)
-
-    if(posNum < negNum):
-        negFeatureFolders = []
-        sequence = range(negNum)
-        for i in range(folderNum):
-            random.shuffle(sequence)
-            negFeatureFolders.append([negFeature[j] for j in sequence[:posNum]])
-            print('random sequence:')
-            print(sequence[:posNum])
-
-    #print(np.array(negFeatureFolders).shape)
-    for i in range(folderNum):
-        subTrainFeature = negFeatureFolders[i]
-        subTrainFeature.extend(posFeature)
-        subTrainFeature = np.array(subTrainFeature)
-        subTrainLabel = list(np.zeros(posNum))
-        subTrainLabel.extend(list(np.ones(posNum)))
-        subTrainLabel = np.array(subTrainLabel)
-        print("=====%dst Bagging=====") % (i+1)
-        print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
-        #print(subTrainFeature.shape)
-        #print(subTrainLabel)
-        clf = linear_model.LogisticRegression(penalty='l2', dual=False)
-        clf.fit(subTrainFeature, subTrainLabel)
-        predictedProb_temp = [item[0] for item in clf.predict_proba(testFeature)[:, 1:]]
-        predictedProbList.append(predictedProb_temp)
-        print("%dst predicted probability:") % (i+1)
-        print(predictedProb_temp)
-        print(clf.predict(testFeature))
-    predictedProbArray = np.array(predictedProbList)
-    print(np.mean(predictedProbArray, axis = 0))
+    pass

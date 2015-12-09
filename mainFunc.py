@@ -1,7 +1,5 @@
-import csv
 from commonFunction import *
-import numpy as np
-
+from featureSupplement import *
 from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer, GBDT
 from svm_classification import svmclassifier, baggingSVM, svm_GridSearch_creditScore
 from regression import logistic_regression, bagging_LR, bagging_twoLayer_LR, Ad_LR
@@ -11,42 +9,14 @@ from sklearn.decomposition import PCA
 
 from classifierComparison import bagging_classifierComparison
 
-def readFeatureCSV(para_k):
-    with open('feature/feature.csv') as f:
-        Feature = []
-        csvreader = csv.reader(f)
-        i = 0
-        for rows in csvreader:
-            if(i == 0 or i == 8 or i == 10 or i == 11 or i == 13 or i == 14 or i == 22 or i == 38 or i == 45 or i == 46):
-                i += 1
-                continue
-            elif(i < 51):
-                try:
-                    Feature.append([float(item) for item in rows])
-                except ValueError, e:
-                    print("error", e, "on line", i)
-                i += 1
-            else:
-                break
-        f.close()
-    Feature = np.array(Feature)[:, :]
-    Feature = (Feature - np.min(Feature, axis = 0))/ (np.max(Feature, axis = 0) - np.min(Feature, axis = 0))
 
-    #print(Feature)
-    Label = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-
-    #Feature = SelectKBest(chi2, k=para_k).fit_transform(Feature, Label)
-    #Feature = PCA(n_components=para_k).fit_transform(Feature, Label)
-    return(Feature, Label)
 
 if(__name__ == "__main__"):
-    feature, label = readFeatureCSV(59)
-    #featureFolder, labelFolder = crossValidation(feature, label, 3)
-    #crossValidationFunc(featureFolder, labelFolder, bagging_classifierComparison)
-    #randomFolders = [[14, 7, 22, 33, 23, 31, 2, 4, 40, 34, 1, 17, 35, 19, 6, 36, 0, 16, 25, 20], [39, 3, 27, 15, 18, 30, 29, 5, 10, 9, 11, 37, 32, 8, 21, 28, 12, 38, 26, 24, 13]]
-    randomFolders = [[8, 21, 19, 39, 6, 25, 23, 15, 26, 3, 34, 7, 30], [14, 36, 38, 20, 10, 4, 35, 37, 31, 40, 27, 5, 12], [0, 1, 16, 29, 2, 9, 28, 32, 24, 22, 18, 13, 17, 33, 11]]
-    featureFolder = [np.array([list(list(feature)[j]) for j in folderList]) for folderList in randomFolders]
-    labelFolder = [np.array([list(label)[k] for k in folderList]) for folderList in randomFolders]
+    trainFeature, trainLabel, testFeature = readFeature()
+    #featureFolder, labelFolder = crossValidation(trainFeature, trainLabel, 3)
+    randomFolders = [[15, 13, 21, 39, 34, 24, 46, 41, 0, 49, 2, 31, 29, 12, 32, 9], [22, 35, 10, 26, 1, 6, 48, 30, 8, 28, 16, 23, 42, 7, 25, 14], [45, 3, 19, 17, 44, 18, 20, 11, 36, 33, 27, 38, 4, 47, 5, 37, 43, 40]]
+    featureFolder = [np.array([list(list(trainFeature)[j]) for j in folderList]) for folderList in randomFolders]
+    labelFolder = [np.array([list(trainLabel)[k] for k in folderList]) for folderList in randomFolders]
 
     '''
     #knn
