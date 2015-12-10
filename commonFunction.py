@@ -4,8 +4,6 @@ Created on Fri Mar 13 10:54:17 2015
 
 @author: yangchen
 """
-
-
 #These are common-used functions
 import numpy as np
 import random

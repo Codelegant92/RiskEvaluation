@@ -1,8 +1,13 @@
-import csv
-import numpy as np
+from richness_feature import *
+from tradingFreq_feature import *
+from lifeLoan_feature import *
+from amount_feature import *
+from moneyRate_feature import *
 
 def readFeature():
-    with open('feature/feature.csv') as f:
+    print("********************************Combine All the Features***************************************")
+
+    with open('cache/feature.csv') as f:
         fullFeature = []
         missFeature = []
         csvreader = csv.reader(f)
@@ -38,6 +43,23 @@ def readFeature():
     trainLabel = np.array(trainSamples)[:, -1]
     print("++++++++++++++++++++++++++++end supplementing missing features++++++++++++++++++++++++++++++++++++++++")
     return(trainFeature, trainLabel, testFeature)
+
+def featureCombination(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lifeLoan_tolerance, amount_dim, amount_tolerance, moneyRate_dim, moneyRate_tolerance):
+    richNess = generateRichnessFeature()
+    tradingFreq = generateFreqFeature(tradingFreq_dim, tradingFreq_tolerance)
+    lifeLoan = generateLifeFeature(lifeLoan_dim, lifeLoan_tolerance)
+    amount = generateAmountFeature(amount_dim, amount_tolerance)
+    moneyRate = generateMoneyRateFeature(moneyRate_dim, moneyRate_tolerance)
+
+    Label = np.array([1 if(i < 20) else 0 if(i < 50) else 9 for i in range(70)])
+    Feature = np.concatenate([richNess.T, tradingFreq.T, lifeLoan.T, amount.T, moneyRate.T, Label.T]).T
+
+    with open('cache/feature.csv', 'wb') as f:
+        csvwriter = csv.writer(f)
+        for item in Feature:
+            csvwriter.writerow(item)
+        f.close()
+    print(Label)
 
 #to supplement the missing features, parameter ---> nearestNum
 def supplementFeature(fullFeature, missFeature, nearestNum = 6):
@@ -85,4 +107,4 @@ def supplementFeature(fullFeature, missFeature, nearestNum = 6):
 
 
 if(__name__ == "__main__"):
-    pass
+    featureCombination(10, 0.5, 10, 0.5, 10, 0.6, 3, 0.6)

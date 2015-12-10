@@ -3,47 +3,6 @@ __author__ = 'yangchen'
 import csv
 import numpy as np
 
-def generateRichnessDataset():
-    richNess = []
-    sampleNum = np.zeros(50)
-    featureNum = 26
-    for num in xrange(0, 51):
-        filePath = 'noisy data/testingData/' + str(num) + '.csv'
-        f1 = open(filePath, 'rb')
-        nullNum = np.zeros(featureNum)
-        i = 0
-        for row in csv.reader(f1):
-            if(i == 0):
-                i += 1
-                continue
-            j = 0
-            sampleNum[num-1] += 1      #count the total number of samples of each platform
-            for rows in row:
-                if(j < featureNum):
-                    if(rows == '\\N' or rows == ''):
-                        nullNum[j] += 1
-                    j += 1
-        richNess.append((sampleNum[num - 1] - nullNum) * 1.0 / sampleNum[num - 1])
-        f1.close()
-    #print(sampleNum)
-    testLabel = np.zeros(50)
-    for index in range(20):
-        testLabel[index] = 1
-    print(sampleNum)
-    '''
-    f2 = open('TrainingRichness_1.csv', 'wb')
-    csvwriter = csv.writer(f2)
-    csvwriter.writerow(['releasetime', 'fulltime', 'repaytime', 'item_name', 'item_amount', 'item_status', 'item_introduction',
-                        'life_loan', 'money_rate', 'loan_type', 'loan_use', 'bonding_company', 'deadline', 'repaytype',
-                        'borrower_name', 'borrower_sex', 'borrower_age', 'borrower_education', 'borrower_marriage',
-                        'borrower_industry', 'borrower_city', 'borrower_income', 'borrower_house', 'borrower_car',
-                        'reward'])
-    richNess = np.array(richNess)[:, 1:]
-    for item in richNess:
-        csvwriter.writerow(item)
-    '''
-    return(np.array(richNess)[:, 1:], np.array(testLabel))
-
 def repayTime2deadLine_day(dateList, subtractedDays): #dateList format'2015-08-27', subtractedDays format7
     while(subtractedDays > 0):
         if(dateList[2] > 1):
