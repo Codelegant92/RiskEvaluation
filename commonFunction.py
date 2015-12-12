@@ -11,6 +11,7 @@ import math
 
 #function: write a uniform program of cross validation-randomly divide the dataset into folders
 def crossValidation(featureMatrix, featureLabel, folderNum):
+    print("********************************Cross Validation***************************************")
     instanceNum = featureMatrix.shape[0]
     n = instanceNum / folderNum
     folderNum -= 1
@@ -20,6 +21,7 @@ def crossValidation(featureMatrix, featureLabel, folderNum):
     randomFolders.append(sequence[(n*folderNum):])
     randomFeatureMatrix = [np.array([list(list(featureMatrix)[j]) for j in folderList]) for folderList in randomFolders]
     randomFeatureLabel = [np.array([list(featureLabel)[k] for k in folderList]) for folderList in randomFolders]
+    print("Random Folders:")
     print(randomFolders)
     return(randomFeatureMatrix, randomFeatureLabel)#randomFeatureMatrix:a list of ndarray matrix [array([[],[],...,[]]), array([[],...,[]]),...,array([[],...,[]])]
                                                    #randomFeatureLabel:a list of ndarray [array([]), ..., array([])]
@@ -77,8 +79,8 @@ def crossValidationFunc(featureFolder, labelFolder, func, *args):
         print((temp[0][0]+temp[1][0])/2, (temp[0][1]+temp[1][1])/2, ((temp[0][0]+temp[1][0])/2+(temp[0][1]+temp[1][1])/2)/2)
         '''
 
-        predictedLabel = func(trainFeature, trainLabel, testFeature, *args)
 
+        predictedLabel = func(trainFeature, trainLabel, testFeature, *args)
         predictedLabel = np.array(predictedLabel)
         diff = list(testLabel - predictedLabel)
         if(list(testLabel).count(1) != 0):

@@ -55,5 +55,5 @@ def generateTradeFreq(filePath, dim, richTolerance):
     return(average_timesPerDay_list)
 
 if __name__ == "__main__":
-    feature = generateFreqFeature()
+    feature = generateFreqFeature(10, 0.5)
     print(feature)

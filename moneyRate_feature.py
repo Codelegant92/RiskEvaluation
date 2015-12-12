@@ -47,5 +47,5 @@ def generateMoneyRate(filePath, dim, richTolerance):
     return(average_moneyRate_list)
 
 if __name__ == "__main__":
-    feature = generateMoneyRateFeature()
+    feature = generateMoneyRateFeature(3, 0.6)
     print(feature)

@@ -87,33 +87,6 @@ def bagging_adboostDT(trainFeature, trainLabel, testFeature, folderNum, estimato
     return(predictedLabel)
 
 
-
-    '''
-    randomFeatureFolder, randomLabelFolder = crossValidation(trainFeature, trainLabel, folderNum)
-    print("========bagging adaDT========")
-    for i in range(folderNum):
-        subTrainFeature = []
-        subTrainLabel = []
-        for j in range(folderNum):
-            if(j != i):
-                subTrainFeature.extend(list(randomFeatureFolder[j]))
-                subTrainLabel.extend(list(randomLabelFolder[j]))
-        subTrainFeature = np.array(subTrainFeature)
-        subTrainLabel = np.array(subTrainLabel)
-        print("=====%dst Bagging=====") % (i+1)
-        print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
-        clf = AdaBoostClassifier(n_estimators = estimatorNum, learning_rate = learningRate)
-        clf.fit(subTrainFeature, subTrainLabel)
-        predictedLabel_temp = clf.predict(testFeature)
-        predictedLabel_voting.append(predictedLabel_temp)
-        print("%dst predicted labels:") % (i+1)
-        print(predictedLabel_temp)
-    predictedLabel_voting = np.array(predictedLabel_voting).T
-    predictedLabel = [1 if(list(predictedLabel_voting[i]).count(1) > list(predictedLabel_voting[i]).count(0)) else 0 for i in range(predictedLabel_voting.shape[0])]
-    print(predictedLabel)
-    return(predictedLabel)
-    '''
-
 def GBDT(trainFeature, trainLabel, testFeature):
     clf = GradientBoostingClassifier()
     clf.fit(trainFeature, trainLabel)
@@ -121,10 +94,4 @@ def GBDT(trainFeature, trainLabel, testFeature):
     return(predictedLabel)
 
 if __name__ == "__main__":
-    folderNum = 5
-    #dataFeature, dataLabel = readAustralianData('./Data/Australia/australian.dat')
-    #dataFeature, dataLabel = read_GermanData('./Data/german/german.data-numeric')
-    dataFeature, dataLabel = read_GermanData20('./Data/german/german.data')
-    featureFolder, labelFolder = crossValidation(dataFeature, dataLabel, folderNum)
-    (accu1, accu2) = crossValidationFunc(featureFolder, labelFolder ,decision_Tree)
-    print(accu1, accu2)
+    pass

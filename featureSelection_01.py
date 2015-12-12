@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 if(__name__ == "__main__"):
 
-    trainFeature, trainLabel, testFeature = readFeature()
+    trainFeature, trainLabel, testFeature = readFeature(10, 0.5, 10, 1, 10, 1, 3, 0.6, 20)
     #featureFolder, labelFolder = crossValidation(trainFeature, trainLabel, 3)
     randomFolders = [[15, 13, 21, 39, 34, 24, 46, 41, 0, 49, 2, 31, 29, 12, 32, 9], [22, 35, 10, 26, 1, 6, 48, 30, 8, 28, 16, 23, 42, 7, 25, 14], [45, 3, 19, 17, 44, 18, 20, 11, 36, 33, 27, 38, 4, 47, 5, 37, 43, 40]]
     featureFolder = [np.array([list(list(trainFeature)[j]) for j in folderList]) for folderList in randomFolders]
@@ -27,9 +27,9 @@ if(__name__ == "__main__"):
     print("positive: %d, negative: %d") % (testLabel.count(1), testLabel.count(0))
     print("test label:")
     print(testLabel)
-    predictedLabel_CV1 = bagging_LR(trainFeature, np.array(trainLabel), testFeature, 11)
+    #predictedLabel_CV1 = bagging_LR(trainFeature, np.array(trainLabel), testFeature, 11)
     #predictedLabel_CV1 = bagging_twoLayer_LR(trainFeature, np.array(trainLabel), testFeature, 9)
-    #predictedLabel_CV1 = logistic_regression(trainFeature, np.array(trainLabel), testFeature)
+    predictedLabel_CV1 = logistic_regression(trainFeature, np.array(trainLabel), testFeature)
     #predictedLabel_CV1 = svmclassifier(trainFeature, np.array(trainLabel), testFeature, 1, 0.015625)
     #predictedLabel_CV1 = knn(trainFeature, np.array(trainLabel), testFeature, 5)
     #predictedLabel_CV1 = decision_Tree(trainFeature, np.array(trainLabel), testFeature)
@@ -57,9 +57,9 @@ if(__name__ == "__main__"):
     print("testing sample:")
     print("positive: %d, negative: %d") % (testLabel.count(1), testLabel.count(0))
     print(testLabel)
-    predictedLabel_CV2 = bagging_LR(trainFeature, np.array(trainLabel), testFeature, 11)
+    #predictedLabel_CV2 = bagging_LR(trainFeature, np.array(trainLabel), testFeature, 11)
     #predictedLabel_CV2 = bagging_twoLayer_LR(trainFeature, np.array(trainLabel), testFeature, 9)
-    #predictedLabel_CV2 = logistic_regression(trainFeature, np.array(trainLabel), testFeature)
+    predictedLabel_CV2 = logistic_regression(trainFeature, np.array(trainLabel), testFeature)
     #predictedLabel_CV2 = svmclassifier(trainFeature, np.array(trainLabel), testFeature, 1, 0.015625)
     #predictedLabel_CV2 = knn(trainFeature, np.array(trainLabel), testFeature, 5)
     #predictedLabel_CV2 = decision_Tree(trainFeature, np.array(trainLabel), testFeature)
@@ -87,9 +87,9 @@ if(__name__ == "__main__"):
     print("testing sample:")
     print("positive: %d, negative: %d") % (testLabel.count(1), testLabel.count(0))
     print(testLabel)
-    predictedLabel_CV3 = bagging_LR(trainFeature, np.array(trainLabel), testFeature, 11)
+    #predictedLabel_CV3 = bagging_LR(trainFeature, np.array(trainLabel), testFeature, 11)
     #predictedLabel_CV3 = bagging_twoLayer_LR(trainFeature, np.array(trainLabel), testFeature, 9)
-    #predictedLabel_CV3 = logistic_regression(trainFeature, np.array(trainLabel), testFeature)
+    predictedLabel_CV3 = logistic_regression(trainFeature, np.array(trainLabel), testFeature)
     #predictedLabel_CV3 = svmclassifier(trainFeature, np.array(trainLabel), testFeature, 1, 0.015625)
     #predictedLabel_CV3 = knn(trainFeature, np.array(trainLabel), testFeature, 5)
     #predictedLabel_CV3 = decision_Tree(trainFeature, np.array(trainLabel), testFeature)

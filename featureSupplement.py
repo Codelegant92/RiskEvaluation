@@ -4,45 +4,67 @@ from lifeLoan_feature import *
 from amount_feature import *
 from moneyRate_feature import *
 
-def readFeature():
+def readFeature(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lifeLoan_tolerance, amount_dim, amount_tolerance, moneyRate_dim, moneyRate_tolerance, supplement_nearestNum):
     print("********************************Combine All the Features***************************************")
-
-    with open('cache/feature.csv') as f:
+    featureCombination(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lifeLoan_tolerance, amount_dim, amount_tolerance, moneyRate_dim, moneyRate_tolerance)
+    with open('cache/feature.csv', 'rb') as f:
         fullFeature = []
         missFeature = []
         csvreader = csv.reader(f)
-        i = 0
+        i = 1
         for rows in csvreader:
-            if(i == 0):
-                i += 1
-                continue
             featureTemp = [float(item) if item != 'nan' else item for item in rows]
             if('nan' in featureTemp):
                 missIndices = [j for j, x in enumerate(featureTemp) if(x == 'nan')]
                 featureTemp = [0 if(x == 'nan') else x for x in featureTemp]
                 missFeature.append((featureTemp, missIndices))
+                print(i)
+                i += 1
             else:
                 fullFeature.append(featureTemp)
+                i += 1
         f.close()
-    print("++++++++++++++++++++++++++++begin supplementing missing features++++++++++++++++++++++++++++++++++++++++")
+
+    print("++++++++++++++++++begin supplementing missing features+++++++++++++++++")
     #a parameter of supplementFeature is the number of nearest neighbors of the missing samples
-    newFullFeature, newMissFeature = supplementFeature(fullFeature, missFeature, 20)
+    newFullFeature, newMissFeature = supplementFeature(fullFeature, missFeature, supplement_nearestNum)
     trainSamples = []
+    trainLabel = []
     testFeature = []
+    testPlatform = []
     for item in newFullFeature:
-        if(item[-1] == 9):
-            testFeature.append(item[:-1])
+        if(item[-1] < 21):
+            trainLabel.append(1)
+            trainSamples.append(item[:-1])
+        elif(item[-1] < 51):
+            trainLabel.append(0)
+            trainSamples.append(item[:-1])
         else:
-            trainSamples.append(item)
+            testFeature.append(item[:-1])
+            testPlatform.append(item[-1])
+
     for item in newMissFeature:
-        if(item[-1] == 9):
-            testFeature.append(item[:-1])
+        if(item[-1] < 21):
+            trainLabel.append(1)
+            trainSamples.append(item[:-1])
+        elif(item[-1] < 51):
+            trainLabel.append(0)
+            trainSamples.append(item[:-1])
         else:
-            trainSamples.append(item)
-    trainFeature = np.array(trainSamples)[:, :-1]
-    trainLabel = np.array(trainSamples)[:, -1]
-    print("++++++++++++++++++++++++++++end supplementing missing features++++++++++++++++++++++++++++++++++++++++")
-    return(trainFeature, trainLabel, testFeature)
+            testFeature.append(item[:-1])
+            testPlatform.append(item[-1])
+
+    trainFeature = np.array(trainSamples)
+    trainLabel = np.array(trainLabel)
+    testFeature = np.array(testFeature)
+    #normalize the feature
+    featureMax = np.max(np.concatenate([trainFeature, testFeature]), axis=0)
+    featureMin = np.min(np.concatenate([trainFeature, testFeature]), axis=0)
+
+    trainFeature = (trainFeature - featureMin) / (featureMax - featureMin)
+    testFeature = (testFeature - featureMin) / (featureMax - featureMin)
+    print("++++++++++++++++++end supplementing missing features++++++++++++++++++++")
+    return(trainFeature, trainLabel, testFeature, testPlatform)
 
 def featureCombination(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lifeLoan_tolerance, amount_dim, amount_tolerance, moneyRate_dim, moneyRate_tolerance):
     richNess = generateRichnessFeature()
@@ -50,25 +72,25 @@ def featureCombination(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lif
     lifeLoan = generateLifeFeature(lifeLoan_dim, lifeLoan_tolerance)
     amount = generateAmountFeature(amount_dim, amount_tolerance)
     moneyRate = generateMoneyRateFeature(moneyRate_dim, moneyRate_tolerance)
-
-    Label = np.array([1 if(i < 20) else 0 if(i < 50) else 9 for i in range(70)])
-    Feature = np.concatenate([richNess.T, tradingFreq.T, lifeLoan.T, amount.T, moneyRate.T, Label.T]).T
-
+    platform = np.array([i for i in xrange(1, 71)])
+    Feature = np.concatenate([richNess.T, tradingFreq.T, lifeLoan.T, amount.T, moneyRate.T])
+    featureLabel = list(Feature)
+    featureLabel.append(platform)
+    featureLabel = np.array(featureLabel).T
     with open('cache/feature.csv', 'wb') as f:
         csvwriter = csv.writer(f)
-        for item in Feature:
+        for item in featureLabel:
             csvwriter.writerow(item)
+            #csvwriter.writerow(Label[i])
         f.close()
-    print(Label)
+
 
 #to supplement the missing features, parameter ---> nearestNum
-def supplementFeature(fullFeature, missFeature, nearestNum = 6):
+def supplementFeature(fullFeature, missFeature, nearestNum):
     supplementedFeature = []
     fullFeature = np.array(fullFeature)
-
     for missFeatureTuple in missFeature:        #start to supplement missing features
         singleMissFeature = np.array(missFeatureTuple[0])
-
         print("=========================================================")
         valuedFeatureIndices = [i for i in range(singleMissFeature.shape[0]-1) if(i not in missFeatureTuple[1] and i != 25)]
         missedFeatureIndices = missFeatureTuple[1]
@@ -79,7 +101,6 @@ def supplementFeature(fullFeature, missFeature, nearestNum = 6):
         print(missedFeatureIndices)
         print("----------------------------------------")
         '''
-
         euclideanDistance = []                  #calculate the distance between the missfeature and each full feature
         for singleFeature in fullFeature:
             euclideanDistance.append(np.linalg.norm(singleFeature[valuedFeatureIndices] - singleMissFeature[valuedFeatureIndices]))
@@ -93,18 +114,18 @@ def supplementFeature(fullFeature, missFeature, nearestNum = 6):
         print(nearestIndices)
         print("----------------------------------------")
         '''
-
         for i in missedFeatureIndices:
             singleMissFeature[i] = np.mean(fullFeature.T[i, nearestIndices])
             print("i->%d, means->%f") % (i, singleMissFeature[i])
         supplementedFeature.append(singleMissFeature)
     supplementedFeature = np.array(supplementedFeature)
-
-    #Feature = SelectKBest(chi2, k=para_k).fit_transform(Feature, Label)
-    #Feature = PCA(n_components=para_k).fit_transform(Feature, Label)
     return(fullFeature, supplementedFeature)
 
 
 
 if(__name__ == "__main__"):
-    featureCombination(10, 0.5, 10, 0.5, 10, 0.6, 3, 0.6)
+    trainFeature, trainLabel, testFeature, testPlatform = readFeature(10, 0.5, 10, 0.5, 10, 0.5, 3, 0.6, 20)
+    print(trainFeature)
+    print(trainLabel)
+    print(testFeature)
+    print(testPlatform)

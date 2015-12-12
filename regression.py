@@ -2,6 +2,8 @@
 from commonFunction import *
 from sklearn import linear_model
 from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
+from unbalanced_dataset.under_sampling import UnderSampler
+from unbalanced_dataset.unbalanced_dataset import UnbalancedDataset
 
 def logistic_regression(trainFeature, trainLabel, testFeature):
     clf = linear_model.LogisticRegression(penalty='l2', dual=False)
@@ -10,7 +12,7 @@ def logistic_regression(trainFeature, trainLabel, testFeature):
     predictedProb = clf.predict_proba(testFeature)
     return(predictedLabel)
 
-def bagging_LR(trainFeature, trainLabel, testFeature, folderNum=5):
+def bagging_LR(trainFeature, trainLabel, testFeature, folderNum):
     predictedLabel_voting = []
 
     posNum = list(trainLabel).count(1)
@@ -41,6 +43,28 @@ def bagging_LR(trainFeature, trainLabel, testFeature, folderNum=5):
         subTrainLabel = list(np.zeros(posNum))
         subTrainLabel.extend(list(np.ones(posNum)))
         subTrainLabel = np.array(subTrainLabel)
+        print("=====%dst Bagging=====") % (i+1)
+        print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
+        #print(subTrainFeature.shape)
+        #print(subTrainLabel)
+        predictedLabel_temp = logistic_regression(subTrainFeature, subTrainLabel, testFeature)
+        #print("predicted probability:")
+        #print(predictedProb)
+        predictedLabel_voting.append(predictedLabel_temp)
+        print("%dst predicted labels:") % (i+1)
+        print(predictedLabel_temp)
+    predictedLabel_voting = np.array(predictedLabel_voting).T
+    predictedLabel = [1 if(list(predictedLabel_voting[i]).count(1) > list(predictedLabel_voting[i]).count(0)) else 0 for i in range(predictedLabel_voting.shape[0])]
+    print(predictedLabel)
+    return(predictedLabel)
+
+def bagging_LR1(trainFeature, trainLabel, testFeature, folderNum):
+    predictedLabel_voting = []
+
+    for i in range(folderNum):
+        print("Random under sampling")
+        US = UnderSampler(verbose=True)
+        subTrainFeature, subTrainLabel = US.fit(trainFeature, trainLabel)
         print("=====%dst Bagging=====") % (i+1)
         print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
         #print(subTrainFeature.shape)

@@ -37,13 +37,15 @@ def generateRichnessFeature():
         subRichness = [1 - (list(features).count('\\N')+list(features).count('')) / float(i-1) for features in sampleValue_transform]
         subRichness.append(i-1)
         richNess.append(subRichness)
+    '''
     with open('cache/richness-feature.csv', 'wb') as f3:
         csvwriter = csv.writer(f3)
         for item in richNess:
             csvwriter.writerow(item)
         f3.close()
+    '''
     return(np.array(richNess))
 
 if(__name__ == "__main__"):
-    richNess_feature = generateRichnessDataset()
+    richNess_feature = generateRichnessFeature()
     print(richNess_feature)

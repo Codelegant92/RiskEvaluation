@@ -1,5 +1,5 @@
-import csv
 from commonFunction import *
+from featureSupplement import *
 import numpy as np
 from sklearn import linear_model
 
@@ -12,39 +12,12 @@ from sklearn.decomposition import PCA
 
 from classifierComparison import bagging_classifierComparison
 
-def readFeature(para_k):
-    with open('feature/feature.csv') as f:
-        Feature = []
-        csvreader = csv.reader(f)
-        i = 0
-        for rows in csvreader:
-            if(i == 0 or i == 8 or i == 10 or i == 11 or i == 13 or i == 14 or i == 22 or i == 38 or i == 46 or i == 51 or i == 54 or i == 66):
-                i += 1
-                continue
-            else:
-                try:
-                    Feature.append([float(item) for item in rows])
-                except ValueError, e:
-                    print("error", e, "on line", i)
-                i += 1
-        f.close()
-    Feature = np.array(Feature)[:, :]
-    Feature = (Feature - np.min(Feature, axis = 0))/ (np.max(Feature, axis = 0) - np.min(Feature, axis = 0))
-    trainFeature = Feature[:41, :]
-    testFeature = Feature[41:, :]
-    #print(Feature)
-    trainLabel = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-
-    #Feature = SelectKBest(chi2, k=para_k).fit_transform(Feature, Label)
-    #Feature = PCA(n_components=para_k).fit_transform(Feature, Label)
-    return(trainFeature, trainLabel, testFeature)
 
 if(__name__ == "__main__"):
-    trainFeature, trainLabel, testFeature = readFeature(59)
-    folderNum = 21
-
+    trainFeature, trainLabel, testFeature, testPlatform = readFeature(10, 0.5, 10, 0.6, 10, 0.6, 3, 0.6, 20)
+    folderNum = 9
+    print(len(testFeature))
     predictedProbList = []
-
     posNum = list(trainLabel).count(1)
     negNum = list(trainLabel).count(0)
     print("positive number: %d, negative number: %d") % (posNum, negNum)
@@ -89,4 +62,8 @@ if(__name__ == "__main__"):
         print(predictedProb_temp)
         print(clf.predict(testFeature))
     predictedProbArray = np.array(predictedProbList)
-    print(np.mean(predictedProbArray, axis = 0))
+    result = list(np.mean(predictedProbArray, axis = 0))
+    resultTuple = sorted(zip(testPlatform, result), key = lambda x: x[0])
+    print("===platform==================risk=========")
+    for i in range(len(testPlatform)):
+        print("     %d               %f") % (resultTuple[i][0], 1-resultTuple[i][1])

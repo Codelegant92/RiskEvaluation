@@ -47,5 +47,5 @@ def generateAmount(filePath, dim, richTolerance):
     return(average_amount_list)
 
 if __name__ == "__main__":
-    feature = generateAmountFeature()
+    feature = generateAmountFeature(10, 0.6)
     print(feature)

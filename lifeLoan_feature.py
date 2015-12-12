@@ -47,5 +47,5 @@ def generateLifeLoan(filePath, dim, richTolerance):
     return(average_lifeLoan_list)
 
 if __name__ == "__main__":
-    feature = generateLifeFeature()
+    feature = generateLifeFeature(10, 0.5)
     print(feature)
