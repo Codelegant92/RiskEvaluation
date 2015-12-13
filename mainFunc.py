@@ -5,18 +5,16 @@ from regression import logistic_regression, bagging_LR, bagging_twoLayer_LR, Ad_
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.decomposition import PCA
 
-
-
 if(__name__ == "__main__"):
-
     old_accuracy = 0
     para = []
-    for i in range(5, 15):
-        for j in range(5, 15):
-            for k in range(5, 15):
-                for l in range(3, 6):
-
-                    trainFeature, trainLabel, testFeature, testPlatform = readFeature(10, 0.5, 10, 0.6, 10, 0.6, 3, 0.6, 20)
+    x = 0
+    for freq_i in range(5, 21):
+        for life_i in range(5, 21):
+            for amount_i in range(5, 21):
+                for rate_i in range(3, 10):
+                    x += 1
+                    trainFeature, trainLabel, testFeature, testPlatform = readFeature(freq_i, 0.5, life_i, 0.6, amount_i, 0.6, rate_i, 0.6, 20)
     #featureFolder, labelFolder = crossValidation(trainFeature, trainLabel, 3)
     #crossValidationFunc(featureFolder, labelFolder, bagging_classifierComparison)
 
@@ -24,12 +22,11 @@ if(__name__ == "__main__"):
                     featureFolder = [np.array([list(list(trainFeature)[j]) for j in folderList]) for folderList in randomFolders]
                     labelFolder = [np.array([list(trainLabel)[k] for k in folderList]) for folderList in randomFolders]
 
-
     #logistic regression
-                    accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
+                    accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, bagging_LR, 11)
                     new_accuracy = (accu12+accu22)/2.0
-                    if(new_accuracy > old_accuracy):
-                        para.append([i, j, k, l, new_accuracy])
+                    if(new_accuracy >= old_accuracy):
+                        para.append([freq_i, life_i, amount_i, rate_i, new_accuracy])
                         old_accuracy = new_accuracy
     for item in para:
         print(item)
@@ -39,7 +36,6 @@ if(__name__ == "__main__"):
 
     #bagging_twoLayer_LR
     accu1a, accu2a = crossValidationFunc(featureFolder, labelFolder, bagging_twoLayer_LR, 11)
-
 
     #decision tree
     accu14, accu24 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)

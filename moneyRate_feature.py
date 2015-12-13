@@ -2,7 +2,7 @@ import numpy as np
 import csv
 
 def generateMoneyRateFeature(dim = 3, richTolerance = 0.6):      #the returned amount feature is a 70*dim ndarray of string
-    print("********************************Generating Money RateFeature***************************************")
+    print("********************************Generating Money RateFeature************************************")
     moneyRate_feature = []
     writeFilePath = 'cache/moneyRate-'+str(dim)+'dim-feature.csv'
     with open(writeFilePath, 'wb') as f:

@@ -3,7 +3,7 @@ import numpy as np
 import csv
 
 def generateFreqFeature(dim = 10, richTolerance = 0.5):      #the returned trading frequency feature is a 70*dim ndarray of string
-    print("********************************Generating Trading Frequency Feature***************************************")
+    print("********************************Generating Trading Frequency Feature*******************************")
     tradingFreq_feature = []
     writeFilePath = 'cache/tradeFrequency-'+str(dim)+'dim-feature.csv'
     with open(writeFilePath, 'wb') as f:

@@ -2,7 +2,7 @@ import csv
 import numpy as np
 
 def generateRichnessFeature():
-    print("********************************Generating Richness Feature***************************************")
+    print("********************************Generating Richness Feature**************************************")
     richNess = []
     for num in xrange(1, 51):       #calculate the richness of training samples
         sampleValue = []

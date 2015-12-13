@@ -2,7 +2,7 @@ import numpy as np
 import csv
 
 def generateLifeFeature(dim = 10, richTolerance = 0.5):      #the returned life loan feature is a 70*dim ndarray of string
-    print("********************************Generating Lifeloan Feature***************************************")
+    print("********************************Generating Lifeloan Feature************************************")
     lifeLoan_feature = []
     writeFilePath = 'cache/lifeLoan-'+str(dim)+'dim-feature.csv'
     with open(writeFilePath, 'wb') as f:
