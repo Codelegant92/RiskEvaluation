@@ -13,9 +13,18 @@ from sklearn.decomposition import PCA
 from classifierComparison import bagging_classifierComparison
 
 
+
 if(__name__ == "__main__"):
-    trainFeature, trainLabel, testFeature, testPlatform = readFeature(10, 0.5, 10, 0.6, 10, 0.6, 3, 0.6, 20)
-    folderNum = 9
+    trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 5, 0.6, 20, 0.6, 5, 0.6, 6)
+    clf = linear_model.LogisticRegression(penalty='l2', dual=False)
+    clf.fit(trainFeature, trainLabel)
+    predictedProbList = clf.predict_proba(testFeature)
+    predictedProbArray = [item[0] for item in clf.predict_proba(testFeature)[:, 1:]]
+    result = list(predictedProbArray)
+    resultTuple = sorted(zip(testPlatform, result), key = lambda x: x[0])
+    '''
+    #bagging Logistic Regression
+    folderNum = 11
     print(len(testFeature))
     predictedProbList = []
     posNum = list(trainLabel).count(1)
@@ -64,6 +73,7 @@ if(__name__ == "__main__"):
     predictedProbArray = np.array(predictedProbList)
     result = list(np.mean(predictedProbArray, axis = 0))
     resultTuple = sorted(zip(testPlatform, result), key = lambda x: x[0])
+    '''
     print("===platform==================risk=========")
     for i in range(len(testPlatform)):
         print("     %d               %f") % (resultTuple[i][0], 1-resultTuple[i][1])

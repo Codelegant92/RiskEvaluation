@@ -14,7 +14,7 @@ def logistic_regression(trainFeature, trainLabel, testFeature):
 
 def bagging_LR(trainFeature, trainLabel, testFeature, folderNum):
     predictedLabel_voting = []
-
+    negFeatureFolders = []
     posNum = list(trainLabel).count(1)
     negNum = list(trainLabel).count(0)
     trainFeature = list(trainFeature)
@@ -30,7 +30,6 @@ def bagging_LR(trainFeature, trainLabel, testFeature, folderNum):
             print("error", e, "on line", i)
 
     if(posNum < negNum):
-        negFeatureFolders = []
         sequence = range(negNum)
         for i in range(folderNum):
             random.shuffle(sequence)
