@@ -6,7 +6,7 @@ from unbalanced_dataset.under_sampling import UnderSampler
 from unbalanced_dataset.unbalanced_dataset import UnbalancedDataset
 
 def logistic_regression(trainFeature, trainLabel, testFeature):
-    clf = linear_model.LogisticRegression(penalty='l2', dual=False)
+    clf = linear_model.LogisticRegression(class_weight='auto')
     clf.fit(trainFeature, trainLabel)
     predictedLabel = clf.predict(testFeature)
     predictedProb = clf.predict_proba(testFeature)

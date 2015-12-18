@@ -60,6 +60,7 @@ def bagging_LR_prob(trainFeature, trainLabel, testFeature):
 if(__name__ == "__main__"):
 
     trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 5, 1, 20, 1, 5, 0.6, 20)
+
     #featureFolder, labelFolder = crossValidation(trainFeature, trainLabel, 3)
     randomFolders = [[15, 13, 21, 39, 34, 24, 46, 41, 0, 49, 2, 31, 29, 12, 32, 9], [22, 35, 10, 26, 1, 6, 48, 30, 8, 28, 16, 23, 42, 7, 25, 14], [45, 3, 19, 17, 44, 18, 20, 11, 36, 33, 27, 38, 4, 47, 5, 37, 43, 40]]
     featureFolder = [np.array([list(list(trainFeature)[j]) for j in folderList]) for folderList in randomFolders]
