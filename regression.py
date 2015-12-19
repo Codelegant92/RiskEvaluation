@@ -114,7 +114,7 @@ def bagging_twoLayer_LR(trainFeature, trainLabel, testFeature, folderNum=5):
         subTrainLabel = np.array(subTrainLabel)
         print("=====%dst Bagging=====") % (i+1)
         print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
-        clf = linear_model.LogisticRegression(penalty='l2', dual=False)
+        clf = linear_model.LogisticRegression(penalty='l2', dual=False, class_weight='auto')
         clf.fit(subTrainFeature, subTrainLabel)
         predictedTrainProb = clf.predict_proba(trainFeature)
         predictedTestProb = clf.predict_proba(testFeature)

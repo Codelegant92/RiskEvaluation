@@ -3,20 +3,71 @@ from featureSupplement import *
 import numpy as np
 from sklearn import linear_model
 
-from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer, GBDT
-from svm_classification import svmclassifier, baggingSVM, svm_GridSearch_creditScore
-from regression import logistic_regression, bagging_LR, bagging_twoLayer_LR, Ad_LR
-from KNN import knn, bagging_KNN
-from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.decomposition import PCA
 
-from classifierComparison import bagging_classifierComparison
+def bagging_twoLayer_LR1(trainFeature, trainLabel, testFeature, folderNum=5):
+    newTrainFeature = []
+    newTestFeature = []
+    posNum = list(trainLabel).count(1)
+    negNum = list(trainLabel).count(0)
+    trainFeature = list(trainFeature)
+    posFeature = []
+    negFeature = []
+    for i in range(trainLabel.shape[0]):
+        try:
+            if(trainLabel[i] == 0):
+                negFeature.append(trainFeature[i])
+            else:
+                posFeature.append(trainFeature[i])
+        except ValueError, e:
+            print("error", e, "on line", i)
 
+    if(posNum < negNum):
+        negFeatureFolders = []
+        sequence = range(negNum)
+        for i in range(folderNum):
+            random.shuffle(sequence)
+            negFeatureFolders.append([negFeature[j] for j in sequence[:posNum]])
+    #print(np.array(negFeatureFolders).shape)
+    for i in range(folderNum):
+        newTrainFeature_temp = []
+        newTestFeature_temp = []
+        subTrainFeature = negFeatureFolders[i]
+        subTrainFeature.extend(posFeature)
+        subTrainFeature = np.array(subTrainFeature)
+        subTrainLabel = list(np.zeros(posNum))
+        subTrainLabel.extend(list(np.ones(posNum)))
+        subTrainLabel = np.array(subTrainLabel)
+        print("=====%dst Bagging=====") % (i+1)
+        print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
+        clf = linear_model.LogisticRegression(penalty='l2', dual=False, class_weight='auto')
+        clf.fit(subTrainFeature, subTrainLabel)
+        predictedTrainProb = clf.predict_proba(trainFeature)
+        predictedTestProb = clf.predict_proba(testFeature)
+        for item in predictedTrainProb:
+            newTrainFeature_temp.append(item[1])
+        for item in predictedTestProb:
+            newTestFeature_temp.append(item[1])
+        newTrainFeature.append(newTrainFeature_temp)
+        newTestFeature.append(newTestFeature_temp)
+    newTrainFeature = np.array(newTrainFeature).T
+    newTestFeature = np.array(newTestFeature).T
+    clf.fit(newTrainFeature, trainLabel)
+    predictedLabel = clf.predict_proba(newTestFeature)
 
+    print(predictedLabel[:, 0])
+    return(predictedLabel[:, 0])
 
 if(__name__ == "__main__"):
-    trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 10, 0.6, 15, 0.6, 5, 0.6, 2)
+    trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 10, 0.6, 15, 0.6, 5, 0.6, 1)
 
+    riskList = []
+    for i in range(1000):
+        riskList.append(bagging_twoLayer_LR1(trainFeature, trainLabel, testFeature, 101))
+    riskList = np.array(riskList)
+    answer = np.mean(riskList, axis=0)
+    print("===platform==================risk=========")
+    for i in range(len(testPlatform)):
+        print("     %d               %f") % (testPlatform[i], answer[i])
     '''
     clf = linear_model.LogisticRegression(dual=False, class_weight='auto')
     clf.fit(trainFeature, trainLabel)
@@ -25,7 +76,7 @@ if(__name__ == "__main__"):
     result = list(predictedProbArray)
     resultTuple = sorted(zip(testPlatform, result), key = lambda x: x[0])
     '''
-
+    '''
     riskList = []
     for ii in range(1000):
         #bagging Logistic Regression
@@ -90,3 +141,6 @@ if(__name__ == "__main__"):
     for i in range(len(testPlatform)):
         #print("     %d               %f") % (resultTuple[i][0], 1-resultTuple[i][1])
         print("     %d               %f") % (resultTuple[i][0], answer[i])
+
+    '''
+

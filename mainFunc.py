@@ -24,7 +24,7 @@ if(__name__ == "__main__"):
             for amount_i in range(15, 16):
                 for rate_i in range(5, 6):
                     for neighbor_i in range(1, 2):
-                        for folderNum_i in range(19, 28, 2):
+                        for folderNum_i in range(23, 24):
                             x += 1
                             trainFeature, trainLabel, testFeature, testPlatform = readFeature(freq_i, 0.5, life_i, 0.6, amount_i, 0.6, rate_i, 0.6, neighbor_i)
                             #featureFolder, labelFolder = crossValidation(trainFeature, trainLabel, 2)
@@ -39,7 +39,7 @@ if(__name__ == "__main__"):
                             labelFolder = [np.array([list(trainLabel)[k] for k in folderList]) for folderList in randomFolders]
 
                             #logistic regression
-                            accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, bagging_LR, folderNum_i)
+                            accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, bagging_twoLayer_LR, folderNum_i)
                             new_accuracy = (accu12+accu22)/2.0
                             if(new_accuracy >= old_accuracy):
                                 para.append([freq_i, life_i, amount_i, rate_i, neighbor_i, folderNum_i, accu12, accu22, new_accuracy])
