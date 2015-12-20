@@ -1,7 +1,7 @@
 #This is for logistic regression
 from commonFunction import *
 from sklearn import linear_model
-from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
+from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor, ExtraTreesRegressor
 from unbalanced_dataset.under_sampling import UnderSampler
 from unbalanced_dataset.unbalanced_dataset import UnbalancedDataset
 
@@ -133,6 +133,23 @@ def bagging_twoLayer_LR(trainFeature, trainLabel, testFeature, folderNum=5):
     return(predictedLabel)
 
 def Ad_LR(trainFeature, trainLabel, testFeature):
+    temp = []
+    for i in range(1000):
+        clf = ExtraTreesRegressor()
+        clf.fit(trainFeature, trainLabel)
+        predictedLabel = clf.predict(testFeature)
+        temp.append()
+    temp = np.array(temp)
+    label = np.mean(temp, axis=0)
+    predictLabel = []
+    for i in range(label.shape[0]):
+        if(label[i] >= 0.5):
+            predictLabel.append(1)
+        else:
+            predictLabel.append(0)
+    return(predictLabel)
+
+def Extra(trainFeature, trainLabel, testFeature):
     clf = AdaBoostRegressor(linear_model.LogisticRegression(penalty='l2', dual=False))
     clf.fit(trainFeature, trainLabel)
     predictedLabel = clf.predict(testFeature)
