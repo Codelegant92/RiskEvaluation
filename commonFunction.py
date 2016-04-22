@@ -23,6 +23,7 @@ def crossValidation(featureMatrix, featureLabel, folderNum):
     randomFeatureLabel = [np.array([list(featureLabel)[k] for k in folderList]) for folderList in randomFolders]
     print("Random Folders:")
     print(randomFolders)
+    print(randomFeatureLabel)
     return(randomFeatureMatrix, randomFeatureLabel)#randomFeatureMatrix:a list of ndarray matrix [array([[],[],...,[]]), array([[],...,[]]),...,array([[],...,[]])]
                                                    #randomFeatureLabel:a list of ndarray [array([]), ..., array([])]
 
@@ -85,10 +86,10 @@ def crossValidationFunc(featureFolder, labelFolder, func, *args):
         diff = list(testLabel - predictedLabel)
         if(list(testLabel).count(1) != 0):
             type_one_error = (diff.count(1))/(float(list(testLabel).count(1)))
-            type_one_accuracy = 1 - type_one_error
+            type_one_accuracy = 1 - type_one_error #True Positive
             if(list(testLabel).count(0) != 0):
                 type_two_error = (diff.count(-1))/(float(list(testLabel).count(0)))
-                type_two_accuracy = 1 - type_two_error
+                type_two_accuracy = 1 - type_two_error  #True Negative
                 cross_accuracy.append({'type-1-accuracy' : type_one_accuracy, 'type-2-accuracy' : type_two_accuracy})
             else:
                 cross_accuracy.append({'type-1-accuracy' : type_one_accuracy, 'type-2-accuracy' : 'null'})

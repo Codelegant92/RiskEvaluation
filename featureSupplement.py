@@ -34,10 +34,10 @@ def readFeature(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lifeLoan_t
     testPlatform = []
     for item in newFullFeature:
         if(item[-1] < 21):
-            trainLabel.append(1)
+            trainLabel.append(1)    #good platforms are labeled as 1
             trainSamples.append(item[:-1])
         elif(item[-1] < 51):
-            trainLabel.append(0)
+            trainLabel.append(0)    #bad platforms are labeled as 0
             trainSamples.append(item[:-1])
         else:
             testFeature.append(item[:-1])

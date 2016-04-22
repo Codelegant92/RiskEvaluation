@@ -40,7 +40,7 @@ def adboostDT(trainFeature, trainLabel, testFeature, estimatorNum = 50, learning
     predictedLabel = clf.predict(testFeature)
     return(predictedLabel)
 
-def bagging_adboostDT(trainFeature, trainLabel, testFeature, folderNum, estimatorNum = 50, learningRate = 1.0):
+def bagging_DT(trainFeature, trainLabel, testFeature, folderNum, estimatorNum = 50, learningRate = 1.0):
     predictedLabel_voting = []
 
     posNum = list(trainLabel).count(1)
@@ -56,9 +56,8 @@ def bagging_adboostDT(trainFeature, trainLabel, testFeature, folderNum, estimato
                 posFeature.append(trainFeature[i])
         except ValueError, e:
             print("error", e, "on line", i)
-
+    negFeatureFolders = []
     if(posNum < negNum):
-        negFeatureFolders = []
         sequence = range(negNum)
         for i in range(folderNum):
             random.shuffle(sequence)
@@ -75,9 +74,12 @@ def bagging_adboostDT(trainFeature, trainLabel, testFeature, folderNum, estimato
         print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
         #print(subTrainFeature.shape)
         #print(subTrainLabel)
+        '''
         clf = AdaBoostClassifier(n_estimators = estimatorNum, learning_rate = learningRate)
         clf.fit(subTrainFeature, subTrainLabel)
         predictedLabel_temp = clf.predict(testFeature)
+        '''
+        predictedLabel_temp = decision_Tree(subTrainFeature, subTrainLabel, testFeature)
         predictedLabel_voting.append(predictedLabel_temp)
         print("%dst predicted labels:") % (i+1)
         print(predictedLabel_temp)

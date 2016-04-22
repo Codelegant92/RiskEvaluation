@@ -49,7 +49,7 @@ def svmclassifier(trainFeature, trainLabel, testFeature, para_C, para_gamma):
     return(predictedLabel)
 
 def baggingSVM(trainFeature, trainLabel, testFeature, para_C, para_gamma):
-    folderNum = 9
+    folderNum = 39
     predictedLabel_voting = []
     posNum = list(trainLabel).count(1)
     negNum = list(trainLabel).count(0)
@@ -64,9 +64,9 @@ def baggingSVM(trainFeature, trainLabel, testFeature, para_C, para_gamma):
                 posFeature.append(trainFeature[i])
         except ValueError, e:
             print("error", e, "on line", i)
-
+    negFeatureFolders = []
     if(posNum < negNum):
-        negFeatureFolders = []
+
         sequence = range(negNum)
         for i in range(folderNum):
             random.shuffle(sequence)
