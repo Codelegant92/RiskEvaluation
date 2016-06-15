@@ -7,6 +7,8 @@ from sklearn.decomposition import PCA
 from sklearn import tree
 from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer, GBDT
 from sklearn.ensemble import BaggingRegressor, AdaBoostRegressor, ExtraTreesRegressor, GradientBoostingRegressor, RandomForestRegressor
+from regression import bagging_LR, logistic_regression
+from svm_classification import svmclassifier, baggingSVM
 
 def bagging_twoLayer_LR1(trainFeature, trainLabel, testFeature, folderNum=5):
     newTrainFeature = []
@@ -65,12 +67,14 @@ def bagging_twoLayer_LR1(trainFeature, trainLabel, testFeature, folderNum=5):
 
 if(__name__ == "__main__"):
     trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 10, 0.6, 15, 0.6, 5, 0.6, 1)
-
+    '''
     selectFeature = SelectKBest(chi2, k = 55)
     selectFeature.fit(trainFeature, trainLabel)
     trainFeature_new = selectFeature.transform(trainFeature)
     testFeature_new = selectFeature.transform(testFeature)
-
+    '''
+    trainFeature_new = trainFeature[:, :]
+    testFeature_new = testFeature[:, :]
     '''
     trainFeature_new = trainFeature[:, :26]
     testFeature_new = testFeature[:, :26]
@@ -81,15 +85,25 @@ if(__name__ == "__main__"):
     trainFeature_new = pca.transform(trainFeature)
     testFeature_new = pca.transform(testFeature)
     '''
-    '''
+
     riskList = []
-    for i in range(100):
-        riskList.append(bagging_twoLayer_LR1(trainFeature_new, trainLabel, testFeature_new, 50))
+    for i in range(1):
+        riskList.append(bagging_LR(trainFeature_new, trainLabel, testFeature_new, 51))
+        #riskList.append(baggingSVM(trainFeature_new, trainLabel, testFeature_new, 128, 0.00048828125))
     riskList = np.array(riskList)
     answer = np.mean(riskList, axis=0)
+
+    resultTuple = sorted(zip(testPlatform, answer), key = lambda x: x[0])
+    result = []
     print("===platform==================risk=========")
     for i in range(len(testPlatform)):
-        print("     %d               %f") % (testPlatform[i], answer[i])
+        print("     %d               %f") % (resultTuple[i][0], resultTuple[i][1])
+        result.append(resultTuple[i][1])
+    goodResult = result[:10]
+    badResult = result[10:]
+    print("bad2good: %d")%(goodResult.count(0))
+    print("good2bad: %d")%(badResult.count(1))
+
     '''
     para = []
     for i in range(1000):
@@ -100,11 +114,12 @@ if(__name__ == "__main__"):
     para = np.array(para)
     predictedLabel = np.mean(para, axis = 0)
     resultTuple = sorted(zip(testPlatform, predictedLabel), key = lambda x: x[0])
+
     print("===platform==================risk=========")
     for i in range(len(testPlatform)):
         #print("     %d               %f") % (resultTuple[i][0], 1-resultTuple[i][1])
         print("     %d               %f") % (resultTuple[i][0], 1 - resultTuple[i][1])
-
+    '''
 
     '''
     clf = linear_model.LogisticRegression(dual=False, class_weight='auto')
@@ -162,10 +177,15 @@ if(__name__ == "__main__"):
             print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
             #print(subTrainFeature.shape)
             #print(subTrainLabel)
-            clf = linear_model.LogisticRegression(class_weight='auto')
-            clf.fit(subTrainFeature, subTrainLabel)
-            predictedLabel = clf.predict_proba(testFeature_new)
-            predictedProb_temp = [item[1] for item in predictedLabel]
+            temp = []
+            for x in range(10):
+                clf = ExtraTreesRegressor()
+                clf.fit(subTrainFeature, subTrainLabel)
+                predictedLabel = clf.predict(testFeature_new)
+                temp.append(predictedLabel)
+            temp = np.array(temp)
+            temp = np.mean(temp, axis=0)
+            predictedProb_temp = [item for item in temp]
             predictedProbList.append(predictedProb_temp)
             print("%dst predicted probability:") % (i+1)
             print(predictedProb_temp)

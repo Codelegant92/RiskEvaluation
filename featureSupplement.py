@@ -3,6 +3,7 @@ from tradingFreq_feature import *
 from lifeLoan_feature import *
 from amount_feature import *
 from moneyRate_feature import *
+from sklearn import preprocessing
 
 def readFeature(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lifeLoan_tolerance, amount_dim, amount_tolerance, moneyRate_dim, moneyRate_tolerance, supplement_nearestNum):
     print("********************************Combine All the Features***************************************")
@@ -63,6 +64,15 @@ def readFeature(tradingFreq_dim, tradingFreq_tolerance, lifeLoan_dim, lifeLoan_t
 
     trainFeature = (trainFeature - featureMin) / (featureMax - featureMin)
     testFeature = (testFeature - featureMin) / (featureMax - featureMin)
+
+    '''
+    trainNum = trainFeature.shape[0]
+    scalar = preprocessing.StandardScaler()
+    combinedFeature = np.concatenate([trainFeature, testFeature])
+    normalizedFeature = scalar.fit_transform(combinedFeature)
+    trainFeature = normalizedFeature[:trainNum, :]
+    testFeature = normalizedFeature[trainNum:, :]
+    '''
     print("++++++++++++++++++end supplementing missing features++++++++++++++++++++")
     return(trainFeature, trainLabel, testFeature, testPlatform)
 
@@ -124,8 +134,8 @@ def supplementFeature(fullFeature, missFeature, nearestNum):
 
 
 if(__name__ == "__main__"):
-    trainFeature, trainLabel, testFeature, testPlatform = readFeature(10, 0.5, 10, 0.5, 10, 0.5, 3, 0.6, 20)
-    print(trainFeature)
+    trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 10, 0.5, 15, 0.5, 5, 0.6, 1)
+    print(trainFeature.shape)
     print(trainLabel)
-    print(testFeature)
+    print(testFeature.shape)
     print(testPlatform)

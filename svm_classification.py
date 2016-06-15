@@ -49,7 +49,7 @@ def svmclassifier(trainFeature, trainLabel, testFeature, para_C, para_gamma):
     return(predictedLabel)
 
 def baggingSVM(trainFeature, trainLabel, testFeature, para_C, para_gamma):
-    folderNum = 9
+    folderNum = 59
     predictedLabel_voting = []
     posNum = list(trainLabel).count(1)
     negNum = list(trainLabel).count(0)

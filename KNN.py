@@ -168,7 +168,7 @@ def bagging_KNN(trainFeature, trainLabel, testFeature, k, folderNum = 5):
         subTrainLabel = list(np.zeros(posNum))
         subTrainLabel.extend(list(np.ones(posNum)))
         subTrainLabel = np.array(subTrainLabel)
-        print("=====%dst Bagging=====") % (i+1)
+        print("=====%dst knn Bagging=====") % (i+1)
         print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
         #print(subTrainFeature.shape)
         #print(subTrainLabel)
