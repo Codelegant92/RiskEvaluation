@@ -6,7 +6,7 @@ from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor, ExtraTreesRe
 #from unbalanced_dataset.unbalanced_dataset import UnbalancedDataset
 
 def logistic_regression(trainFeature, trainLabel, testFeature):
-    clf = linear_model.LogisticRegression(class_weight='auto')
+    clf = linear_model.LogisticRegression()
     clf.fit(trainFeature, trainLabel)
     predictedLabel = clf.predict(testFeature)
     predictedProb = clf.predict_proba(testFeature)

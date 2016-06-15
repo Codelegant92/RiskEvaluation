@@ -5,7 +5,7 @@ from sklearn import linear_model
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.decomposition import PCA
 from sklearn import tree
-from decisionTree import decision_Tree, adboostDT, bagging_adboostDT, RandomForest_Classifer, GBDT
+from decisionTree import decision_Tree, adboostDT, bagging_DT, RandomForest_Classifer, GBDT
 from sklearn.ensemble import BaggingRegressor, AdaBoostRegressor, ExtraTreesRegressor, GradientBoostingRegressor, RandomForestRegressor
 from regression import bagging_LR, logistic_regression
 from svm_classification import svmclassifier, baggingSVM
