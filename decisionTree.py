@@ -57,36 +57,60 @@ def bagging_DT(trainFeature, trainLabel, testFeature, folderNum, estimatorNum = 
         except ValueError, e:
             print("error", e, "on line", i)
     negFeatureFolders = []
-    if(posNum < negNum):
+    posFeatureFolders = []
+    if(posNum <= negNum):
         sequence = range(negNum)
         for i in range(folderNum):
             random.shuffle(sequence)
             negFeatureFolders.append([negFeature[j] for j in sequence[:posNum]])
     #print(np.array(negFeatureFolders).shape)
-    for i in range(folderNum):
-        subTrainFeature = negFeatureFolders[i]
-        subTrainFeature.extend(posFeature)
-        subTrainFeature = np.array(subTrainFeature)
-        subTrainLabel = list(np.zeros(posNum))
-        subTrainLabel.extend(list(np.ones(posNum)))
-        subTrainLabel = np.array(subTrainLabel)
-        print("=====%dst Bagging=====") % (i+1)
-        print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
+        for i in range(folderNum):
+            subTrainFeature = negFeatureFolders[i]
+            subTrainFeature.extend(posFeature)
+            subTrainFeature = np.array(subTrainFeature)
+            subTrainLabel = list(np.zeros(posNum))
+            subTrainLabel.extend(list(np.ones(posNum)))
+            subTrainLabel = np.array(subTrainLabel)
+            print("=====%dst Bagging=====") % (i+1)
+            print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
+            predictedLabel_temp = decision_Tree(subTrainFeature, subTrainLabel, testFeature)
+            predictedLabel_voting.append(predictedLabel_temp)
+            print("%dst predicted labels:") % (i+1)
+            print(predictedLabel_temp)
+        predictedLabel_voting = np.array(predictedLabel_voting).T
+        predictedLabel = [1 if(list(predictedLabel_voting[i]).count(1) > list(predictedLabel_voting[i]).count(0)) else 0 for i in range(predictedLabel_voting.shape[0])]
+        print(predictedLabel)
+        return(predictedLabel)
+
+    if(posNum > negNum):
+        sequence = range(posNum)
+        for i in range(folderNum):
+            random.shuffle(sequence)
+            posFeatureFolders.append([posFeature[j] for j in sequence[:negNum]])
+
+    #print(np.array(negFeatureFolders).shape)
+
+        for i in range(folderNum):
+            subTrainFeature = posFeatureFolders[i]
+            subTrainFeature.extend(negFeature)
+            subTrainFeature = np.array(subTrainFeature)
+            subTrainLabel = list(np.zeros(negNum))
+            subTrainLabel.extend(list(np.ones(negNum)))
+            subTrainLabel = np.array(subTrainLabel)
+            print("=====%dst Bagging=====") % (i+1)
+            print("Positive: %d, Negative: %d") % (list(subTrainLabel).count(1), list(subTrainLabel).count(0))
         #print(subTrainFeature.shape)
         #print(subTrainLabel)
-        '''
-        clf = AdaBoostClassifier(n_estimators = estimatorNum, learning_rate = learningRate)
-        clf.fit(subTrainFeature, subTrainLabel)
-        predictedLabel_temp = clf.predict(testFeature)
-        '''
-        predictedLabel_temp = decision_Tree(subTrainFeature, subTrainLabel, testFeature)
-        predictedLabel_voting.append(predictedLabel_temp)
-        print("%dst predicted labels:") % (i+1)
-        print(predictedLabel_temp)
-    predictedLabel_voting = np.array(predictedLabel_voting).T
-    predictedLabel = [1 if(list(predictedLabel_voting[i]).count(1) > list(predictedLabel_voting[i]).count(0)) else 0 for i in range(predictedLabel_voting.shape[0])]
-    print(predictedLabel)
-    return(predictedLabel)
+            predictedLabel_temp = decision_Tree(subTrainFeature, subTrainLabel, testFeature)
+        #print("predicted probability:")
+        #print(predictedProb)
+            predictedLabel_voting.append(predictedLabel_temp)
+            print("%dst predicted labels:") % (i+1)
+            print(predictedLabel_temp)
+        predictedLabel_voting = np.array(predictedLabel_voting).T
+        predictedLabel = [1 if(list(predictedLabel_voting[i]).count(1) > list(predictedLabel_voting[i]).count(0)) else 0 for i in range(predictedLabel_voting.shape[0])]
+        print(predictedLabel)
+        return(predictedLabel)
 
 
 def GBDT(trainFeature, trainLabel, testFeature):

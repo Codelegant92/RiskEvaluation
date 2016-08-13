@@ -7,90 +7,113 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from KNN import knn, bagging_KNN
 from svm_classification import svmclassifier, baggingSVM, svm_GridSearch_creditScore
+from NeuralNetwork import MLP
 
 if(__name__ == "__main__"):
-    '''
-    trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 5, 0.6, 20, 0.6, 5, 0.6, 20)
-    #featureFolder, labelFolder = crossValidation(trainFeature, trainLabel, 4)
-    #crossValidationFunc(featureFolder, labelFolder, bagging_classifierComparison)
 
-    randomFolders = [[27, 8, 31, 3, 43, 25, 11, 2, 4, 45, 28, 30, 21, 24, 17, 26], [15, 33, 19, 18, 35, 37, 5, 44, 29, 32, 38, 42, 46, 20, 13, 1], [41, 0, 10, 39, 48, 23, 47, 6, 9, 22, 7, 34, 40, 12, 16, 14, 49, 36]]
-    featureFolder = [np.array([list(list(trainFeature)[j]) for j in folderList]) for folderList in randomFolders]
-    labelFolder = [np.array([list(trainLabel)[k] for k in folderList]) for folderList in randomFolders]
-    '''
+    trainFeature, trainLabel, testFeature, testPlatform = readFeature(5, 0.5, 10, 0.6, 15, 0.6, 5, 0.6, 20)
 
-    old_accuracy = 0
-    para = []
+    testLabel = [1, 1, 1, 1, 1, 1, 1, 1, 1,1, 0, 0, 0, 0, 0, 0,0,0,0,0]
+    #testLabel = [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1]
+    label = list(trainLabel)
+    label.extend(testLabel)
+    feature1 = np.concatenate([trainFeature, testFeature])[:, :]
+    label = np.array(label)
+    acc_dt = []
+    acc_svm = []
+    acc_lr = []
+    acc_mlp = []
+    bagging_size = 21
+    for n in range(5, 62, 5):
+        pca = PCA(n_components=n)
+        feature = pca.fit_transform(feature1)
+        acc_dt1 = []
+        acc_svm1 = []
+        acc_lr1 = []
+        acc_mlp1 = []
+        for i in range(15):
 
-    svm_C = 128
-    svm_gamma = 0.00390625
-
-    x = 0
-    for freq_i in range(5, 6):
-        for life_i in range(10, 11):
-            for amount_i in range(15, 16):
-                for rate_i in range(5, 6):
-                    for neighbor_i in range(1, 2):
-                        for folderNum_i in range(23, 24):
-                            x += 1
-                            trainFeature, trainLabel, testFeature, testPlatform = readFeature(freq_i, 0.5, life_i, 0.6, amount_i, 0.6, rate_i, 0.6, neighbor_i)
-                            #featureFolder, labelFolder = crossValidation(trainFeature, trainLabel, 2)
-                            #crossValidationFunc(featureFolder, labelFolder, bagging_classifierComparison)
-                            print(trainLabel.shape)
-                            #randomFolders = [[30, 8, 32, 44, 17, 42, 23, 20, 25, 13, 21, 15, 33, 48, 7, 11, 24, 14, 16, 22, 49, 27, 10, 29, 34], [9, 41, 19, 46, 28, 0, 45, 4, 39, 47, 3, 2, 5, 18, 1, 26, 36, 40, 37, 12, 43, 38, 31, 35, 6]]
-                            randomFolders = [[27, 8, 31, 3, 43, 25, 11, 2, 4, 45, 28, 30, 21, 24, 17, 26], [15, 33, 19, 18, 35, 37, 5, 44, 29, 32, 38, 42, 46, 20, 13, 1], [41, 0, 10, 39, 48, 23, 47, 6, 9, 22, 7, 34, 40, 12, 16, 14, 49, 36]]
-                            #randomFolders = [[27, 46, 21, 47, 6, 32, 17, 48, 12, 5, 44, 3], [16, 8, 1, 22, 19, 25, 49, 33, 4, 29, 23, 24], [34, 38, 20, 45, 37, 40, 35, 0, 14, 41, 9, 2], [10, 18, 30, 15, 39, 36, 28, 43, 31, 13, 42, 11, 7, 26]]
-                            #randomFolders = [[33, 0, 27, 24, 3, 28, 35, 36, 2, 32], [12, 20, 44, 47, 29, 42, 11, 7, 30, 14], [49, 25, 9, 8, 46, 1, 31, 18, 43, 19], [37, 13, 17, 48, 26, 23, 16, 45, 4, 39], [40, 41, 15, 10, 34, 22, 5, 6, 38, 21]]
-
-                            featureFolder = [np.array([list(list(trainFeature)[j]) for j in folderList]) for folderList in randomFolders]
-                            labelFolder = [np.array([list(trainLabel)[k] for k in folderList]) for folderList in randomFolders]
-                            #logistic regression
-                            #accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, bagging_LR, folderNum_i)
-                            #new_accuracy = ((accu12+accu22)/2.0)
-                            #print(new_accuracy)
-                                #if(new_accuracy >= old_accuracy):
-                                    #para.append([freq_i, life_i, amount_i, rate_i, neighbor_i, folderNum_i, accu12, accu22, new_accuracy])
-                                    #old_accuracy = new_accuracy
-
+            featureFolder, labelFolder = crossValidation(feature, label, 3)
+            svm_C = 128
+            svm_gamma = 0.00390625
 
     #svm_GridSearch_creditScore(trainFeature, trainLabel)
 
 
     #LR
-    accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
+    #accu12, accu22 = crossValidationFunc(featureFolder, labelFolder, logistic_regression)
     #bagging LR
-    accu13, accu23 = crossValidationFunc(featureFolder, labelFolder, bagging_LR, 11)
-
+            accu13, accu23 = crossValidationFunc(featureFolder, labelFolder, bagging_LR, bagging_size)
+            acc_lr1.append((accu13+accu23)/2)
     #bagging_twoLayer_LR
-    accu1a, accu2a = crossValidationFunc(featureFolder, labelFolder, bagging_twoLayer_LR, 11)
+    #accu1a, accu2a = crossValidationFunc(featureFolder, labelFolder, bagging_twoLayer_LR, 11)
 
     #decision tree
-    accu14, accu24 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
+    #accu14, accu24 = crossValidationFunc(featureFolder, labelFolder, decision_Tree)
     #adboost decision tree
-    accu15, accu25 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
+    #accu15, accu25 = crossValidationFunc(featureFolder, labelFolder, adboostDT, 50, 1.0)
 
     #bagging adboost decision tree
-    accu16, accu26 = crossValidationFunc(featureFolder, labelFolder, bagging_adboostDT, 11, 50, 1.0)
-    accu17, accu27 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
-    accu18, accu28 = crossValidationFunc(featureFolder, labelFolder, GBDT)
+            accu16, accu26 = crossValidationFunc(featureFolder, labelFolder, bagging_DT, bagging_size, 50, 1.0)
+            acc_dt1.append((accu16+accu26)/2)
+    #accu17, accu27 = crossValidationFunc(featureFolder, labelFolder, RandomForest_Classifer)
+    #accu18, accu28 = crossValidationFunc(featureFolder, labelFolder, GBDT)
 
-    accu1b, accu2b = crossValidationFunc(featureFolder, labelFolder, svmclassifier, svm_C, svm_gamma)
-    accu1c, accu2c = crossValidationFunc(featureFolder, labelFolder, baggingSVM, svm_C, svm_gamma)
+    #accu1b, accu2b = crossValidationFunc(featureFolder, labelFolder, svmclassifier, svm_C, svm_gamma)
+            accu1c, accu2c = crossValidationFunc(featureFolder, labelFolder, baggingSVM, bagging_size, svm_C, svm_gamma)
+            acc_svm1.append((accu1c+accu2c)/2)
 
-    accu1d, accu2d = crossValidationFunc(featureFolder, labelFolder, knn, 1)
-    accu1e, accu2e = crossValidationFunc(featureFolder, labelFolder, bagging_KNN, 1, 11)
+    #accu1d, accu2d = crossValidationFunc(featureFolder, labelFolder, knn, 1)
+    #accu1e, accu2e = crossValidationFunc(featureFolder, labelFolder, bagging_KNN, 1, 11)
 
+            accu1n, accu2n = crossValidationFunc(featureFolder, labelFolder, MLP)
+            acc_mlp1.append((accu1n+accu2n)/2)
+
+        acc_dt1 = np.array(acc_dt1)
+        acc_svm1 = np.array(acc_svm1)
+        acc_lr1 = np.array(acc_lr1)
+        acc_mlp1 = np.array(acc_mlp1)
+        print("<<<<<<========pca dimension %d========>>>>>>" % (n))
+        print("decision tree:")
+        print(acc_dt1)
+        print(np.mean(acc_dt1))
+        print("support vector machine:")
+        print(acc_svm1)
+        print(np.mean(acc_svm1))
+        print("logistic regression:")
+        print(acc_lr1)
+        print(np.mean(acc_lr1))
+        print("neural network:")
+        print(acc_mlp1)
+        print(np.mean(acc_mlp1))
+        acc_dt.append((n, np.mean(acc_dt1)))
+        acc_svm.append((n, np.mean(acc_svm1)))
+        acc_lr.append((n, np.mean(acc_lr1)))
+        acc_mlp.append((n, np.mean(acc_mlp1)))
+    '''
+    print()
     print("==================================different classifiers================================")
     print("classifier               type1 accuracy      type2 accuracy      average accuracy")
-    print("    DT                       %f            %f            %f") % (accu14, accu24, (accu14+accu24)/2)
-    print(" AdaDT                       %f            %f            %f") % (accu15, accu25, (accu15+accu25)/2)
-    print("Random Forest                %f            %f            %f") % (accu17, accu27, (accu17+accu27)/2)
-    print(" GBDT                        %f            %f            %f") % (accu18, accu28, (accu18+accu28)/2)
+    #print("    DT                       %f            %f            %f") % (accu14, accu24, (accu14+accu24)/2)
+    #print(" AdaDT                       %f            %f            %f") % (accu15, accu25, (accu15+accu25)/2)
+    #print("Random Forest                %f            %f            %f") % (accu17, accu27, (accu17+accu27)/2)
+    #print(" GBDT                        %f            %f            %f") % (accu18, accu28, (accu18+accu28)/2)
     print("bagging AdaDT                %f            %f            %f") % (accu16, accu26, (accu16+accu26)/2)
-    print("   LR                        %f            %f            %f") % (accu12, accu22, (accu12+accu22)/2)
+    #print("   LR                        %f            %f            %f") % (accu12, accu22, (accu12+accu22)/2)
     print("bagging LR                   %f            %f            %f") % (accu13, accu23, (accu13+accu23)/2)
-    print("bagging two_layer LR         %f            %f            %f") % (accu1a, accu2a, (accu1a+accu2a)/2)
-    print("SVM                          %f            %f            %f") % (accu1b, accu2b, (accu1b+accu2b)/2)
+    #print("bagging two_layer LR         %f            %f            %f") % (accu1a, accu2a, (accu1a+accu2a)/2)
+    #print("SVM                          %f            %f            %f") % (accu1b, accu2b, (accu1b+accu2b)/2)
     print("bagging SVM                  %f            %f            %f") % (accu1c, accu2c, (accu1c+accu2c)/2)
-    print("knn                          %f            %f            %f") % (accu1d, accu2d, (accu1d+accu2d)/2)
-    print("bagging knn                  %f            %f            %f") % (accu1e, accu2e, (accu1e+accu2e)/2)
+    #print("knn                          %f            %f            %f") % (accu1d, accu2d, (accu1d+accu2d)/2)
+    #print("bagging knn                  %f            %f            %f") % (accu1e, accu2e, (accu1e+accu2e)/2)
+    print("MLP                            %f            %f            %f") % (accu1n, accu2n, (accu1n+accu2n)/2)
+    '''
+    print("dt")
+    print(acc_dt)
+    print("svm")
+    print(acc_svm)
+    print("lr")
+    print(acc_lr)
+    print("nn")
+    print(acc_mlp)
+    print(feature.shape)
